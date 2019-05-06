@@ -1,23 +1,100 @@
-<nz-layout class="layout">
-  <nz-header>
+<nz-layout>
+  <nz-sider
+    nzCollapsible
+    [(nzCollapsed)]="isCollapsed"
+    [nzBreakpoint]="'xxl'"
+    [nzCollapsedWidth]="0"
+    [nzZeroTrigger]="zeroTrigger"
+    style="height: 100vh; position: relative;"
+  >
     <div class="logo"></div>
-    <ul nz-menu [nzTheme]="'dark'" [nzMode]="'horizontal'" style="line-height: 64px;">
-      <li nz-menu-item>nav 1</li>
-      <li nz-menu-item>nav 2</li>
-      <li nz-menu-item>nav 3</li>
+    <ul nz-menu [nzTheme]="'dark'" [nzMode]="'inline'" [nzInlineCollapsed]="isCollapsed">
+      <li nz-menu-item>
+        <span><i nz-icon nzType="minus-circle" nzTheme="outline">
+          <span class="nav-text">Ocupado</span>
+        </i></span>
+      </li>
+      <li nz-menu-item>
+        <span>
+          <i nz-icon nzType="bell" nzTheme="outline"></i><span class="nav-text">Llamar</span>
+        </span>
+      </li>
+      <li nz-menu-item>
+        <span><i nz-icon type="upload"></i><span class="nav-text">Atender</span></span>
+      </li>
+      <li nz-menu-item>
+        <span><i nz-icon nzType="caret-right" nzTheme="fill"></i><span class="nav-text">Siguiente</span></span>
+      </li>
     </ul>
-  </nz-header>
-  <nz-content style="padding:0 50px;">
-    <!--<nz-breadcrumb style="margin:16px 0;">
-      <nz-breadcrumb-item>Home</nz-breadcrumb-item>
-      <nz-breadcrumb-item>List</nz-breadcrumb-item>
-      <nz-breadcrumb-item>App</nz-breadcrumb-item>
-    </nz-breadcrumb>-->
-    <nz-content style="padding: 2rem;">
-      <router-outlet></router-outlet>
+  </nz-sider>
+  <nz-layout>
+    <!--<nz-header style="background: #fff; padding:0;"></nz-header>-->
+    <nz-content style="padding: .3rem;">
+      <div style="padding: 1rem;">
+        <router-outlet></router-outlet>
+      </div>
     </nz-content>
-    <nz-footer style="text-align: center;">
+    <nz-footer style="text-align: center;background-color: #ffffff">
       <app-footer></app-footer>
     </nz-footer>
-  </nz-content>
+  </nz-layout>
 </nz-layout>
+<ng-template #zeroTrigger >
+  <i nz-icon type="menu-fold" theme="outline"></i><!--style="position: fixed;top: 1.7rem;z-index: 1000;" -->
+</ng-template>
+<!--<nz-layout>
+  <nz-sider nzCollapsible [(nzCollapsed)]="isCollapsed" [nzTrigger]="triggerTemplate">
+    <div class="logo"></div>
+    <ul nz-menu [nzTheme]="'dark'" [nzMode]="'inline'" [nzInlineCollapsed]="isCollapsed">
+      <li nz-submenu>
+        <span title><i nz-icon type="user"></i><span class="nav-text">User</span></span>
+        <ul>
+          <li nz-menu-item>Tom</li>
+          <li nz-menu-item>Bill</li>
+          <li nz-menu-item>Alex</li>
+        </ul>
+      </li>
+      <li nz-submenu>
+        <span title><i nz-icon type="team"></i><span class="nav-text">Team</span></span>
+        <ul>
+          <li nz-menu-item>Team 1</li>
+          <li nz-menu-item>Team 2</li>
+        </ul>
+      </li>
+      <li nz-menu-item>
+        <span><i nz-icon type="file"></i><span class="nav-text">File</span></span>
+      </li>
+    </ul>
+  </nz-sider>
+  <nz-layout>
+    <nz-header style="background: #fff; padding:0; display: flex;">
+      <i
+        class="trigger"
+        nz-icon
+        [type]="isCollapsed ? 'menu-unfold' : 'menu-fold'"
+        (click)="isCollapsed = !isCollapsed"
+      ></i>
+      <div class="logo"></div>
+      <ul nz-menu [nzTheme]="'light'" [nzMode]="'horizontal'" >
+        <li nz-menu-item>nav 1</li>
+        <li nz-menu-item>nav 2</li>
+        <li nz-menu-item>nav 3</li>
+      </ul>
+    </nz-header>
+    <nz-content style="padding: 1rem">
+      &lt;!&ndash;<nz-breadcrumb>
+        <nz-breadcrumb-item>User</nz-breadcrumb-item>
+        <nz-breadcrumb-item>Bill</nz-breadcrumb-item>
+      </nz-breadcrumb>&ndash;&gt;
+      <div style="padding:10px; background: #fff; min-height: 360px;">
+        <router-outlet></router-outlet>
+      </div>
+    </nz-content>
+    <nz-footer style="text-align: center;background: #fff;">
+      <app-footer></app-footer>
+    </nz-footer>
+  </nz-layout>
+</nz-layout>
+<ng-template #trigger>
+  <i nz-icon type="up"></i>
+</ng-template>-->

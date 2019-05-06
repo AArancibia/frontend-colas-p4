@@ -1,9 +1,120 @@
-<div nz-row>
-  <div nz-col [nzMd]="10">
-    <input type="text" nz-input>
+<div nz-row >
+  <div nz-col [nzXs]="24" [nzMd]="10" style="background-color: #ffffff;" >
+    <nz-card class="card" appCard id="card__ticket" [nzExtra]="cardHeaderLeft" >
+      <nz-list
+        class="card__list"
+        [nzDataSource]="data"
+        nzSize="large"
+        [nzFooter]="footer"
+        [nzRenderItem]="item"
+      >
+        <ng-template #item let-item>
+          <nz-list-item appCardticket [nzContent]="item"></nz-list-item>
+        </ng-template>
+        <ng-template #footer >
+          <div class="card__footer text-center" >
+            <div>
+              <i nz-icon nzType="minus-circle" nzTheme="outline"></i>
+              <p>Ocupado</p>
+            </div>
+            <div>
+              <i nz-icon nzType="bell" nzTheme="outline"></i>
+              <p>Llamar</p>
+            </div>
+            <div>
+              <i nz-icon type="upload"></i>
+              <p>Atender</p>
+            </div>
+            <div>
+              <i nz-icon nzType="caret-right" nzTheme="fill"></i>
+              <p>Siguiente</p>
+            </div>
+          </div>
+        </ng-template>
+      </nz-list>
+    </nz-card>
+    <ng-template #cardHeaderLeft>
+      <div nz-row>
+        <div nz-col [nzXs]="8" [nzMd]="5" class="card__avatar">
+          <nz-avatar [nzSize]="64" nzIcon="user"></nz-avatar>
+        </div>
+        <div nz-col [nzXs]="16" [nzMd]="9" class="card__contribuyente">
+          <p>72875266</p>
+          <p>Alexis Arancibia Sánchez</p>
+          <p>991642870</p>
+        </div>
+        <div nz-col [nzXs]="23" [nzMd]="9" class="card__tematica">
+          <p>Temática</p>
+          <p>Licencia de Edificacion</p>
+        </div>
+        <div nz-col [nzXs]="1" [nzMd]="1">
+          <i nz-icon nzType="edit" nzTheme="outline"></i>
+        </div>
+      </div>
+    </ng-template>
   </div>
-  <div nz-col [nzMd]="1"></div>
-  <div nz-col [nzMd]="13">
-    <input type="text" nz-input>
+  <div nz-col [nzXs]="24" [nzMd]="1"></div>
+  <div nz-col [nzXs]="24" [nzMd]="13" style="background-color: #ffffff">
+    <nz-card [nzExtra]="cardHeaderRight" id="card__right"  ><!-- [nzActions]="[actionSetting, actionEdit ]" -->
+      <div style="height: 70vh;" >
+        <nz-table #basicTable [nzData]="listOfData"
+                  [nzSize]="'small'"><!-- [nzScroll]="{ y: '400px' }'" -->
+          <thead>
+          <tr>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Address</th>
+            <th>Action</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let data of basicTable.data">
+            <td>{{data.name}}</td>
+            <td>{{data.age}}</td>
+            <td>{{data.address}}</td>
+            <td>
+              <a>Action 一 {{data.name}}</a>
+              <nz-divider nzType="vertical"></nz-divider>
+              <a>Delete</a>
+            </td>
+          </tr>
+          </tbody>
+        </nz-table>
+      </div>
+      <div style="position: absolute; bottom: 0;width: 100%;">
+        <div style="display: flex;flex-direction: row;">
+          <div>
+            <i nz-icon type="setting"></i>
+            <p>Imprimiar</p>
+          </div>
+          <div>
+            <i nz-icon type="edit"></i>
+            <p>Descargar</p>
+          </div>
+        </div>
+      </div>
+    </nz-card>
+    <ng-template #cardHeaderRight style="width: 100% !important;">
+      <div nz-row>
+        <div nz-col [nzMd]="24">
+          <nz-breadcrumb>
+            <nz-breadcrumb-item>
+              <a>/licencia de edificación</a>
+            </nz-breadcrumb-item>
+          </nz-breadcrumb>
+        </div>
+        <div nz-col [nzMd]="24" style="margin-top: .7rem;">
+          <nz-input-group [nzSuffix]="suffixIconSearch">
+            <input type="text" nz-input placeholder="input search text" />
+          </nz-input-group>
+        </div>
+      </div>
+    </ng-template>
+    <!--<ng-template #actionSetting>
+
+    </ng-template>-->
+    <ng-template #suffixIconSearch>
+      <i nz-icon type="search"></i>
+    </ng-template>
   </div>
 </div>

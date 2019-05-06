@@ -1,0 +1,38 @@
+.card {
+
+  &__avatar {
+
+  }
+
+  &__contribuyente {
+    p {
+      margin: 0;
+    }
+  }
+
+  &__tematica {
+    p {
+      margin: 0;
+    }
+  }
+
+  &__list {
+
+    &__item {
+
+    }
+  }
+
+  &__footer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    border-top: 1px solid #e2e2e2;
+    padding: 1rem 1.5rem 0rem 1.5rem;
+  }
+}
+
+[nz-list-item] {
+  text-align: center;
+}
