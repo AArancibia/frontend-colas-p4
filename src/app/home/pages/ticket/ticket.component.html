@@ -1,7 +1,8 @@
 <div nz-row >
-  <div nz-col [nzXs]="24" [nzMd]="10" style="background-color: #ffffff;" >
-    <nz-card class="card" appCard id="card__ticket" [nzExtra]="cardHeaderLeft" >
+  <div nz-col [nzXs]="24" [nzLg]="11" >
+    <nz-card class="card" appCard id="card__ticket" style="height: 90vh;" [nzExtra]="cardHeaderLeft" >
       <nz-list
+        style="height: 100% !important;"
         class="card__list"
         [nzDataSource]="data"
         nzSize="large"
@@ -35,54 +36,52 @@
     </nz-card>
     <ng-template #cardHeaderLeft>
       <div nz-row>
-        <div nz-col [nzXs]="8" [nzMd]="5" class="card__avatar">
+        <div nz-col [nzXs]="5" [nzSm]="4" [nzMd]="4" [nzLg]="5"  class="card__avatar">
           <nz-avatar [nzSize]="64" nzIcon="user"></nz-avatar>
         </div>
-        <div nz-col [nzXs]="16" [nzMd]="9" class="card__contribuyente">
+        <div nz-col [nzXs]="11" [nzSm]="9" [nzMd]="9" [nzLg]="9"  class="card__contribuyente">
           <p>72875266</p>
           <p>Alexis Arancibia Sánchez</p>
           <p>991642870</p>
         </div>
-        <div nz-col [nzXs]="23" [nzMd]="9" class="card__tematica">
+        <div nz-col [nzXs]="5" [nzSm]="10" [nzMd]="8" [nzLg]="9"  class="card__tematica">
           <p>Temática</p>
           <p>Licencia de Edificacion</p>
         </div>
-        <div nz-col [nzXs]="1" [nzMd]="1">
+        <div nz-col [nzXs]="1" [nzSm]="1" [nzMd]="1" [nzLg]="1" >
           <i nz-icon nzType="edit" nzTheme="outline"></i>
         </div>
       </div>
     </ng-template>
   </div>
   <div nz-col [nzXs]="24" [nzMd]="1"></div>
-  <div nz-col [nzXs]="24" [nzMd]="13" style="background-color: #ffffff">
-    <nz-card [nzExtra]="cardHeaderRight" id="card__right"  ><!-- [nzActions]="[actionSetting, actionEdit ]" -->
-      <div style="height: 70vh;" >
-        <nz-table #basicTable [nzData]="listOfData"
-                  [nzSize]="'small'"><!-- [nzScroll]="{ y: '400px' }'" -->
-          <thead>
-          <tr>
-            <th>Name</th>
-            <th>Age</th>
-            <th>Address</th>
-            <th>Action</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr *ngFor="let data of basicTable.data">
-            <td>{{data.name}}</td>
-            <td>{{data.age}}</td>
-            <td>{{data.address}}</td>
-            <td>
-              <a>Action 一 {{data.name}}</a>
-              <nz-divider nzType="vertical"></nz-divider>
-              <a>Delete</a>
-            </td>
-          </tr>
-          </tbody>
-        </nz-table>
-      </div>
-      <div style="position: absolute; bottom: 0;width: 100%;">
-        <div style="display: flex;flex-direction: row;">
+  <div nz-col [nzXs]="24" [nzMd]="24" [nzLg]="12" style="background-color: #ffffff;">
+    <nz-card [nzExtra]="cardHeaderRight" style="height: 90vh;" id="card__right" ><!-- [nzActions]="[actionSetting, actionEdit ]" -->
+      <nz-table #basicTable [nzData]="listOfData"
+                [nzSize]="'small'"><!-- [nzScroll]="{ y: '400px' }'" -->
+        <thead>
+        <tr>
+          <th>Name</th>
+          <th>Age</th>
+          <th>Address</th>
+          <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let data of basicTable.data">
+          <td>{{data.name}}</td>
+          <td>{{data.age}}</td>
+          <td>{{data.address}}</td>
+          <td>
+            <a>Action 一 {{data.name}}</a>
+            <nz-divider nzType="vertical"></nz-divider>
+            <a>Delete</a>
+          </td>
+        </tr>
+        </tbody>
+      </nz-table>
+      <div class="card__right">
+        <div class="card__right__footer">
           <div>
             <i nz-icon type="setting"></i>
             <p>Imprimiar</p>

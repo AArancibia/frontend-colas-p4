@@ -31,8 +31,28 @@
     border-top: 1px solid #e2e2e2;
     padding: 1rem 1.5rem 0rem 1.5rem;
   }
+
+  &__right {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    &__footer {
+      display: flex;
+      flex-direction: row;
+      div {
+        display: -webkit-box;
+        padding: .5rem;
+        i {
+          margin-right: .5rem;
+        }
+      }
+    }
+
+  }
 }
 
 [nz-list-item] {
   text-align: center;
 }
+
+

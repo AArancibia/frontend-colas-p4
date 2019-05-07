@@ -2,3 +2,34 @@
 .text-center {
   text-align: center;
 }
+
+@media ( max-height: 720px ) {
+  #card__ticket {
+    .ant-spin-nested-loading {
+      height: 95% !important;
+    }
+
+  }
+}
+
+@media ( min-height: 920px ) {
+  #card__ticket {
+    .ant-card-head {
+      height: 10% !important;
+    }
+    .ant-card-body {
+      height: 80% !important;
+    }
+  }
+}
+
+@media ( max-width: 540px ) {
+  #card__ticket {
+    /*.ant-card-head {
+      height: 20% !important;
+    }
+    .ant-card-body {
+      height: 70% !important;
+    }*/
+  }
+}

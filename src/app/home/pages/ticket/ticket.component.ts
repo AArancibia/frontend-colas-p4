@@ -83,13 +83,16 @@ export class TicketComponent implements OnInit, AfterViewInit {
     const card: any = document.getElementById('card__ticket');
     const cardRight: any = document.getElementById('card__right');
     const cardExtra: any = card.querySelector('.ant-card-extra');
+    const cardHead: any = card.querySelector('.ant-card-head');
     const cardExtraRight: any = cardRight.querySelector('.ant-card-extra');
     const cardBody: any = card.querySelector('.ant-card-body');
     const cardList: any = card.querySelector('.ant-spin-nested-loading');
     const cardFooter: any = card.querySelector('.ant-list-footer');
     cardExtra.style.width = '100%';
+    cardHead.style.height = '16%';
+    cardBody.style.height = '74%';
     cardBody.style.padding = '0px';
-    cardList.style.height = '65vh';
+    cardList.style.height = '100%';
     cardList.style.overflow = 'auto';
     cardFooter.style.paddingBottom = '0px';
     cardExtraRight.style.width = '100%';
