@@ -1,5 +1,10 @@
 import {AfterViewInit, Component, OnInit} from '@angular/core';
 import { distanceInWords } from 'date-fns';
+import {WebsocketService} from '../../../core/services/websocket/websocket.service';
+import {TicketSocketService} from '../../../core/services/ticket/ticket-socket.service';
+import { VetanillaSocketService } from '../../../core/services/ventanilla/vetanilla-socket.service';
+import {NzNotificationService} from 'ng-zorro-antd';
+import {NotificacionService} from '../../../shared/components/notification/notificacion.service';
 
 @Component({
   selector: 'app-ticket',
@@ -74,9 +79,42 @@ export class TicketComponent implements OnInit, AfterViewInit {
     'Man charged over missing wedding girl.',
     'Los Angeles battles huge wildfires.'
   ];
-  constructor() { }
+  constructor(
+    private wsSocket: WebsocketService,
+    public ticketSocket: TicketSocketService,
+    private notificationService: NotificacionService,
+  ) {
+    this.verificarEstadoServidor();
+  }
 
   ngOnInit() {
+    this.ticketSocket.tomarIdSocket();
+    this.obtenerTicketNuevos();
+  }
+
+  verificarEstadoServidor() {
+    this.wsSocket.status$.subscribe(
+      estado => {
+        switch ( estado ) {
+          case 2 : {
+            this.notificationService.messageOnline();
+            break;
+          }
+          case 3 : {
+            this.notificationService.messageOffline();
+            break;
+          }
+          default:
+            this.notificationService.messageOffline();
+            break;
+        }
+      }
+    );
+  }
+
+  obtenerTicketNuevos() {
+    this.ticketSocket.getTickets()
+      .subscribe( data => console.log( data ) );
   }
 
   ngAfterViewInit(): void {

@@ -5,9 +5,17 @@ import { FooterComponent } from './footer/footer.component';
 import { NopagefoundComponent } from './nopagefound/nopagefound.component';
 import { CardticketDirective } from './directives/cardticket.directive';
 import { CardDirective } from './directives/card.directive';
+import {NotificationComponent} from './components/notification/notification.component';
 
 @NgModule({
-  declarations: [HeaderComponent, FooterComponent, NopagefoundComponent, CardticketDirective, CardDirective],
+  declarations: [
+    HeaderComponent,
+    FooterComponent,
+    NopagefoundComponent,
+    CardticketDirective,
+    CardDirective,
+    NotificationComponent,
+  ],
   imports: [
     CommonModule
   ],
@@ -15,8 +23,9 @@ import { CardDirective } from './directives/card.directive';
     HeaderComponent,
     FooterComponent,
     NopagefoundComponent,
+    NotificationComponent,
     CardticketDirective,
-    CardDirective
+    CardDirective,
   ]
 })
 export class SharedModule { }
