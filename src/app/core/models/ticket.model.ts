@@ -2,7 +2,7 @@ import { Administrado } from './administrado.model';
 import {DetEstadoTicket} from '@app/core/models/detestadoticket.model';
 
 export interface Ticket {
-  idticket: string;
+  idticket: number;
   idtematica: number;
   idventanilla: number;
   idadministrado: Administrado;

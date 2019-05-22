@@ -30,6 +30,7 @@ export class TicketComponent implements OnInit, AfterViewInit, OnDestroy {
   idtematica: number;
   ventanilla: any;
   derivar: boolean = false;
+  estado: number = -1;
   constructor(
     private wsSocket: WebsocketService,
     public ticketService: TicketService,
@@ -82,7 +83,11 @@ export class TicketComponent implements OnInit, AfterViewInit, OnDestroy {
   nuevoTicket() {
     this.ticketService.nuevoTicket()
       .pipe(
-        tap( ticket => this.listTicket = [ ...this.listTicket, ticket] ),
+        tap( ( ticket: Ticket ) => {
+          ticket.detestadotickets.splice( 0 );
+          ticket.detestadotickets.push( { idticket: ticket.idticket, idestado: 1 });
+          this.listTicket = [ ...this.listTicket, ticket];
+        }),
         tap( () => this.llenarInfoTicket() )
       ).subscribe();
   }
@@ -162,9 +167,10 @@ export class TicketComponent implements OnInit, AfterViewInit, OnDestroy {
     this.ticketService.ventanillaAsignadaAlTicket()
       .pipe(
         tap(( ticket: Ticket ) => {
+          console.log( ticket );
           const indexTicket = this.listTicket.findIndex( ( ticketo ) => ticketo.codigo == ticket.codigo );
           if ( ticket.idventanilla != this.ventanilla ) {
-            console.log( `${ ticket.idventanilla } --- ${ this.ventanilla }`);
+            //console.log( `${ ticket.idventanilla } --- ${ this.ventanilla }`);
             this.listTicket.splice( indexTicket , 1 );
             this.listTicket = [ ...this.listTicket ];
           } else {
@@ -181,6 +187,7 @@ export class TicketComponent implements OnInit, AfterViewInit, OnDestroy {
     console.log( this.listTicket[0] );
     this.mostrarInfoTicket = this.listTicket.length > 0 ? { ...this.listTicket[0].administrado } : {};
     this.idtematica = this.listTicket.length > 0 ? this.listTicket[0].idtematica : -1;
+    this.estado = this.listTicket.length > 0 && this.listTicket[0].detestadotickets.length > 0 ? this.listTicket[0].detestadotickets.length : -1;
     this.listarTramiteByTematica();
   }
 

@@ -19,18 +19,18 @@
               <i nz-icon nzType="minus-circle" nzTheme="outline"></i>
               <p>Ocupado</p>
             </div>
-            <div (click)="estadoTicket( 2 )" class="card__footer__button">
+            <div (click)="( estado == 1 || estado == 2 ) && estadoTicket( 2 )" class="card__footer__button">
               <i nz-icon nzType="bell" nzTheme="outline"></i>
-              <p>Llamar</p>
+              <p>Llamar {{ estado }}</p>
             </div>
-            <div (click)="estadoTicket( 3 )" *ngIf="!derivar; else derivarTemplate">
+            <div  (click)="estado == 2 && estadoTicket( 3 )" *ngIf="!derivar; else derivarTemplate">
               <i nz-icon type="upload"></i>
-              <p>Atender</p>
+              <p>Atender {{ estado }}</p>
             </div>
             <ng-template #derivarTemplate>
-              <div (click)="estadoTicket( 4 )">
+              <div (click)="estado == 2 && estadoTicket( 4 )">
                 <i nz-icon type="upload"></i>
-                <p>Derivar</p>
+                <p>Derivar {{ estado }}</p>
               </div>
             </ng-template>
             <div (click)="estadoTicket( 4 )">
