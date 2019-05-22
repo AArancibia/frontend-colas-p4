@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {WebsocketService} from '../websocket/websocket.service';
 import {Socket} from 'ngx-socket-io';
-import {environment} from '../../../../environments/environment';
+import {environment} from '@env/environment';
 
 @Injectable()
 export class VetanillaSocketService extends Socket {

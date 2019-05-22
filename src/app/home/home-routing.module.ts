@@ -1,7 +1,6 @@
 import {RouterModule, Routes} from '@angular/router';
 import {NgModule} from '@angular/core';
 import {HomeComponent} from './pages/home/home.component';
-import {TicketComponent} from './pages/ticket/ticket.component';
 
 const routes: Routes = [
   {
@@ -15,7 +14,7 @@ const routes: Routes = [
       },
       {
         path: 'ticket',
-        component: TicketComponent
+        loadChildren: '@app/home/pages/ticket/ticket.module#TicketModule',
       }
     ]
   }

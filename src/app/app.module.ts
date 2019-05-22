@@ -10,6 +10,7 @@ import { NgZorroAntdModule, NZ_I18N, es_ES } from 'ng-zorro-antd';
 import es from '@angular/common/locales/es';
 import {HomeModule} from './home/home.module';
 import {CoreModule} from './core/core.module';
+import {ColasStoreModule} from '@app/store/colas-store.module';
 
 registerLocaleData(es);
 
@@ -21,11 +22,12 @@ registerLocaleData(es);
     BrowserModule,
     HomeModule,
     AppRoutingModule,
-    NgZorroAntdModule,
     FormsModule,
     HttpClientModule,
     BrowserAnimationsModule,
+    NgZorroAntdModule,
     CoreModule,
+    ColasStoreModule,
   ],
   providers: [{ provide: NZ_I18N, useValue: es_ES }],
   bootstrap: [AppComponent]

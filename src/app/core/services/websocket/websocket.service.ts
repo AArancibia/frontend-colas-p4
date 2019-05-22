@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Socket } from 'ngx-socket-io';
-import {environment} from '../../../../environments/environment';
 import {BehaviorSubject, Subject} from 'rxjs';
 import {EstadoServidor} from '../../../shared/enum/estado-servidor.enum';
 

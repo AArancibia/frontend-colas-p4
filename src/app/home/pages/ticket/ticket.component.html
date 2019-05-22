@@ -4,13 +4,14 @@
       <nz-list
         style="height: 100% !important;"
         class="card__list"
-        [nzDataSource]="data"
+        [nzDataSource]="listTicket"
         nzSize="large"
         [nzFooter]="footer"
-        [nzRenderItem]="item"
-      >
+        [nzRenderItem]="item">
         <ng-template #item let-item>
-          <nz-list-item appCardticket [nzContent]="item"></nz-list-item>
+          <nz-list-item appCardticket
+                        [id]="item.codigo"
+                        [nzContent]="item.codigo"></nz-list-item>
         </ng-template>
         <ng-template #footer >
           <div class="card__footer text-center" >
@@ -18,15 +19,21 @@
               <i nz-icon nzType="minus-circle" nzTheme="outline"></i>
               <p>Ocupado</p>
             </div>
-            <div>
+            <div (click)="estadoTicket( 2 )" class="card__footer__button">
               <i nz-icon nzType="bell" nzTheme="outline"></i>
               <p>Llamar</p>
             </div>
-            <div>
+            <div (click)="estadoTicket( 3 )" *ngIf="!derivar; else derivarTemplate">
               <i nz-icon type="upload"></i>
               <p>Atender</p>
             </div>
-            <div>
+            <ng-template #derivarTemplate>
+              <div (click)="estadoTicket( 4 )">
+                <i nz-icon type="upload"></i>
+                <p>Derivar</p>
+              </div>
+            </ng-template>
+            <div (click)="estadoTicket( 4 )">
               <i nz-icon nzType="caret-right" nzTheme="fill"></i>
               <p>Siguiente</p>
             </div>
@@ -40,13 +47,15 @@
           <nz-avatar [nzSize]="64" nzIcon="user"></nz-avatar>
         </div>
         <div nz-col [nzXs]="11" [nzSm]="9" [nzMd]="9" [nzLg]="9"  class="card__contribuyente">
-          <p>72875266</p>
-          <p>Alexis Arancibia Sánchez</p>
-          <p>991642870</p>
+          <p>{{ mostrarInfoTicket.idcontribuyente }}</p>
+          <p>
+              {{ mostrarInfoTicket.nombre }} {{ mostrarInfoTicket.apepat }} {{ mostrarInfoTicket.apemat }}
+          </p>
+          <p>{{ mostrarInfoTicket.nrodoc }}</p>
         </div>
         <div nz-col [nzXs]="5" [nzSm]="10" [nzMd]="8" [nzLg]="9"  class="card__tematica">
           <p>Temática</p>
-          <p>Licencia de Edificacion</p>
+          <p>{{ getTematica( idtematica ) }}</p>
         </div>
         <div nz-col [nzXs]="1" [nzSm]="1" [nzMd]="1" [nzLg]="1" >
           <i nz-icon nzType="edit" nzTheme="outline"></i>
@@ -57,7 +66,7 @@
   <div nz-col [nzXs]="24" [nzMd]="1"></div>
   <div nz-col [nzXs]="24" [nzMd]="24" [nzLg]="12" style="background-color: #ffffff;">
     <nz-card [nzExtra]="cardHeaderRight" style="height: 90vh;" id="card__right" ><!-- [nzActions]="[actionSetting, actionEdit ]" -->
-      <nz-table #basicTable [nzData]="listOfData"
+      <nz-table #basicTable [nzData]="listaTramites"
                 [nzSize]="'small'"><!-- [nzScroll]="{ y: '400px' }'" -->
         <thead>
         <tr>
@@ -68,12 +77,12 @@
         </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let data of basicTable.data">
-          <td>{{data.name}}</td>
-          <td>{{data.age}}</td>
-          <td>{{data.address}}</td>
+        <tr *ngFor="let tramite of basicTable.data">
+          <td>{{ tramite.descripcion }}</td>
+          <td>{{ tramite.plazo }}</td>
+          <td>{{tramite.precio}}</td>
           <td>
-            <a>Action 一 {{data.name}}</a>
+            <a>Action 一 {{ tramite.idtramite }}</a>
             <nz-divider nzType="vertical"></nz-divider>
             <a>Delete</a>
           </td>
@@ -84,7 +93,7 @@
         <div class="card__right__footer">
           <div>
             <i nz-icon type="setting"></i>
-            <p>Imprimiar</p>
+            <p>Imprimir</p>
           </div>
           <div>
             <i nz-icon type="edit"></i>
@@ -118,3 +127,5 @@
   </div>
 </div>
 
+<ngx-snackbar
+  [position]="'bottom-center'"></ngx-snackbar>

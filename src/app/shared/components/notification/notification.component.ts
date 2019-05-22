@@ -17,8 +17,4 @@ export class NotificationComponent implements OnInit {
   ngOnInit() {
   }
 
-  createBasicNotification(template: TemplateRef<{}>): void {
-    this.notification.template(template);
-  }
-
 }

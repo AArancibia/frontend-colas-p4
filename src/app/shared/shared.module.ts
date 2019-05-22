@@ -6,6 +6,7 @@ import { NopagefoundComponent } from './nopagefound/nopagefound.component';
 import { CardticketDirective } from './directives/cardticket.directive';
 import { CardDirective } from './directives/card.directive';
 import {NotificationComponent} from './components/notification/notification.component';
+import {SnackbarModule} from 'ngx-snackbar';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import {NotificationComponent} from './components/notification/notification.comp
     NotificationComponent,
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    SnackbarModule.forRoot()
   ],
   exports: [
     HeaderComponent,

@@ -1,8 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {WebsocketService} from './core/services/websocket/websocket.service';
 import {NzNotificationService} from 'ng-zorro-antd';
-import {TicketSocketService} from './core/services/ticket/ticket-socket.service';
-import {tap} from 'rxjs/operators';
+import {TicketService} from '@app/core/services/ticket/ticket.service';
+import {Ticket} from '@app/core/models/ticket.model';
+import {NotificacionService} from '@app/shared/components/notification/notificacion.service';
 
 @Component({
   selector: 'app-root',
@@ -12,22 +13,35 @@ import {tap} from 'rxjs/operators';
 export class AppComponent implements OnInit {
   title = 'frontend-colas';
   constructor(
-    public wsService: WebsocketService,
-    public ticketSocketService: TicketSocketService,
-    private notification: NzNotificationService,
-  ) {}
+    public wsSocket: WebsocketService,
+    public ticketSocketService: TicketService,
+    private notificationService: NotificacionService,
+  ) {
+    this.verificarEstadoServidor();
+  }
 
   ngOnInit(): void {
-    this.ticketSocketService.getTickets()
-      .subscribe(
-        tap(
-          () => {
-            this.notification.create('success', 'NuevoTicket', '' );
-          },
-        ),
-        () => {},
-        () => {}
-      );
+
+  }
+
+  verificarEstadoServidor() {
+    this.wsSocket.status$.subscribe(
+      estado => {
+        switch ( estado ) {
+          case 2 : {
+            this.notificationService.messageOnline();
+            break;
+          }
+          case 3 : {
+            this.notificationService.messageOffline();
+            break;
+          }
+          default:
+            this.notificationService.messageOffline();
+            break;
+        }
+      }
+    );
   }
 
 }

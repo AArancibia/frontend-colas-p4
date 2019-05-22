@@ -1,120 +1,218 @@
-import {AfterViewInit, Component, OnInit} from '@angular/core';
-import { distanceInWords } from 'date-fns';
-import {WebsocketService} from '../../../core/services/websocket/websocket.service';
-import {TicketSocketService} from '../../../core/services/ticket/ticket-socket.service';
-import { VetanillaSocketService } from '../../../core/services/ventanilla/vetanilla-socket.service';
-import {NzNotificationService} from 'ng-zorro-antd';
-import {NotificacionService} from '../../../shared/components/notification/notificacion.service';
+import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
+import {distanceInWords} from 'date-fns';
+import {WebsocketService} from '@app/core/services/websocket/websocket.service';
+import {TicketService} from '@app/core/services/ticket/ticket.service';
+import {NotificacionService} from '@app/shared/components/notification/notificacion.service';
+import {Ticket} from '@app/core/models/ticket.model';
+import {tap} from 'rxjs/operators';
+//import {CreateTicket, LoadTickets} from '@app/features/ticket-store/state/ticket.action';
+//import {AppState} from '@app/features/ticket-store/state/ticket.type';
+import {Observable} from 'rxjs';
+import {Tramite} from '@app/core/models/tramite.model';
+import {Tematica} from '@app/core/models/tematica.model';
+import {TematicaService} from '@app/core/services/tematica/tematica.service';
+import {DetEstadoTicket} from '@app/core/models/detestadoticket.model';
+import {EstadoTicket} from '@app/shared/enum/estado-ticket.enum';
+import {SnackbarService} from 'ngx-snackbar';
 
 @Component({
   selector: 'app-ticket',
   templateUrl: './ticket.component.html',
   styleUrls: ['./ticket.component.scss']
 })
-export class TicketComponent implements OnInit, AfterViewInit {
+export class TicketComponent implements OnInit, AfterViewInit, OnDestroy {
   time = distanceInWords( new Date(), new Date() );
-  listOfData = [
-    {
-      key: '1',
-      name: 'John Brown',
-      age: 32,
-      address: 'New York No. 1 Lake Park'
-    },
-    {
-      key: '2',
-      name: 'Jim Green',
-      age: 42,
-      address: 'London No. 1 Lake Park'
-    },
-    {
-      key: '3',
-      name: 'Joe Black',
-      age: 32,
-      address: 'Sidney No. 1 Lake Park'
-    }/*,
-    {
-      key: '4',
-      name: 'Joe Black',
-      age: 32,
-      address: 'Sidney No. 1 Lake Park'
-    },
-    {
-      key: '5',
-      name: 'Joe Black',
-      age: 32,
-      address: 'Sidney No. 1 Lake Park'
-    },
-    {
-      key: '6',
-      name: 'Joe Black',
-      age: 32,
-      address: 'Sidney No. 1 Lake Park'
-    },
-    {
-      key: '7',
-      name: 'Joe Black',
-      age: 32,
-      address: 'Sidney No. 1 Lake Park'
-    },
-    {
-      key: '8',
-      name: 'Joe Black',
-      age: 32,
-      address: 'Sidney No. 1 Lake Park'
-    }*/
-  ];
-  data = [
-    'Racing car sprays burning fuel into crowd.',
-    'Japanese princess to wed commoner.',
-    'Australian walks 100km after outback crash.',
-    'Man charged over missing wedding girl.',
-    'Man charged over missing wedding girl.',
-    'Man charged over missing wedding girl.',
-    'Man charged over missing wedding girl.',
-    'Man charged over missing wedding girl.',
-    'Man charged over missing wedding girl.',
-    'Man charged over missing wedding girl.',
-    'Man charged over missing wedding girl.',
-    'Man charged over missing wedding girl.',
-    'Man charged over missing wedding girl.',
-    'Los Angeles battles huge wildfires.'
-  ];
+  tickets$: Observable< Ticket[] >;
+  listTematica: Tematica[] = [];
+  listTicket: any[] = [];
+  listaTramites: Tramite[] = [];
+  mostrarInfoTicket: Tramite = new Tramite();
+  idtematica: number;
+  ventanilla: any;
+  derivar: boolean = false;
   constructor(
     private wsSocket: WebsocketService,
-    public ticketSocket: TicketSocketService,
+    public ticketService: TicketService,
+    public tematicaService: TematicaService,
     private notificationService: NotificacionService,
+    private snackBar: SnackbarService,
   ) {
-    this.verificarEstadoServidor();
+
   }
 
   ngOnInit() {
-    this.ticketSocket.tomarIdSocket();
-    this.obtenerTicketNuevos();
+    //this.listarTickets();
+    this.ventanilla = Number( prompt('Ventanilla' ) );
+    this.obtenerListaTickets();
+    this.nuevoTicket();
+    this.ventanillaAsignadaAlTicket();
+    this.listarTematica();
   }
 
-  verificarEstadoServidor() {
-    this.wsSocket.status$.subscribe(
-      estado => {
-        switch ( estado ) {
-          case 2 : {
-            this.notificationService.messageOnline();
-            break;
-          }
-          case 3 : {
-            this.notificationService.messageOffline();
-            break;
-          }
-          default:
-            this.notificationService.messageOffline();
-            break;
+  obtenerListaTickets() {
+    this.ticketService.obtenerTicketsDia()
+      .pipe(
+        tap(( tickets: Ticket[] ) => {
+          //this.listTicket = tickets.map( ticket => ticket.idventanilla );
+          this.listTicket = tickets.filter( ticket => ticket.idventanilla == this.ventanilla || !ticket.idventanilla );
+          console.log( this.listTicket );
+        }),
+        tap( () => {
+          this.llenarInfoTicket();
+          this.listarTramiteByTematica();
+        })
+      )
+      .subscribe();
+  }
+
+  listarTickets() {
+    this.ticketService.obtenerTickets()
+    .pipe(
+      tap(( tickets: Ticket[] ) => {
+        this.listTicket = tickets;
+      }),
+      tap( () => {
+        this.llenarInfoTicket();
+        this.listarTramiteByTematica();
+      })
+    )
+    .subscribe();
+  }
+
+  nuevoTicket() {
+    this.ticketService.nuevoTicket()
+      .pipe(
+        tap( ticket => this.listTicket = [ ...this.listTicket, ticket] ),
+        tap( () => this.llenarInfoTicket() )
+      ).subscribe();
+  }
+
+  estadoTicket( estado: EstadoTicket ) {
+    switch ( estado ) {
+      case EstadoTicket.llamando: {
+        if ( this.listTicket[0].idventanilla ) {
+          this.snackBar.add({
+            msg: `Llamado al Ticket ${ this.listTicket[0].idticket }`,
+            timeout: 3000,
+            action: {
+              text: 'Borrar',
+              onClick: (snack) => {
+                console.log('dismissed: ' + snack.id);
+              },
+            },
+          });
+          return;
         }
+        const detestado: DetEstadoTicket = {
+          idestado: 2,
+          idticket: this.listTicket[0].idticket,
+        };
+        this.ticketService.asignarVentanillaAndGuardarDetEstadoTicket(
+          detestado.idticket,
+          this.ventanilla,
+          detestado,
+        )
+          .subscribe(
+            responseList => {
+              console.log( responseList );
+            }
+          );
+        break;
       }
-    );
+      case EstadoTicket.atendido: {
+        if ( this.listTicket[0].detestadotickets.length > 2 ) {
+          this.snackBar.add({
+            msg: 'Ticket atendido o esta siendo atendido',
+            timeout: 2500,
+            action: {
+              text: 'Quitar'
+            }
+          });
+          return;
+        }
+        const detestado: DetEstadoTicket = {
+          idestado: 3,
+          idticket: this.listTicket[0].idticket,
+        };
+        this.ticketService.guardarNuevoEstado( detestado )
+          .pipe(
+            tap(
+              ( ticketDB: Ticket ) => {
+                const indexTicketAtendido = this.listTicket.findIndex( ( ticket: Ticket ) => ticket.codigo == ticketDB.codigo  );
+                this.listTicket.splice( indexTicketAtendido, 1, ticketDB );
+                this.listTicket = [ ...this.listTicket ];
+                console.log( this.listTicket );
+                this.derivar = true;
+              }
+            ),
+          )
+          .subscribe();
+        break;
+      }
+      case EstadoTicket.derivado: {
+        break;
+      }
+      default:
+        break;
+    }
+
   }
 
-  obtenerTicketNuevos() {
-    this.ticketSocket.getTickets()
-      .subscribe( data => console.log( data ) );
+  ventanillaAsignadaAlTicket() {
+    this.ticketService.ventanillaAsignadaAlTicket()
+      .pipe(
+        tap(( ticket: Ticket ) => {
+          const indexTicket = this.listTicket.findIndex( ( ticketo ) => ticketo.codigo == ticket.codigo );
+          if ( ticket.idventanilla != this.ventanilla ) {
+            console.log( `${ ticket.idventanilla } --- ${ this.ventanilla }`);
+            this.listTicket.splice( indexTicket , 1 );
+            this.listTicket = [ ...this.listTicket ];
+          } else {
+            this.listTicket.splice( indexTicket , 1, ticket );
+            this.listTicket = [ ...this.listTicket ];
+          }
+          this.llenarInfoTicket();
+        })
+      )
+      .subscribe();
+  }
+
+  llenarInfoTicket() {
+    console.log( this.listTicket[0] );
+    this.mostrarInfoTicket = this.listTicket.length > 0 ? { ...this.listTicket[0].administrado } : {};
+    this.idtematica = this.listTicket.length > 0 ? this.listTicket[0].idtematica : -1;
+    this.listarTramiteByTematica();
+  }
+
+  listarTramiteByTematica() {
+    if ( !this.idtematica ) return;
+    this.tematicaService.tramitesByTematica( this.idtematica )
+    .pipe(
+      tap( ( tramites: Tramite[] ) => {
+        this.listaTramites = tramites;
+      })
+    )
+    .subscribe();
+  }
+
+  listarTematica() {
+    this.tematicaService.obtenerTematicas()
+    .pipe(
+      tap( ( tematicas: Tematica[] ) => {
+        this.listTematica = tematicas;
+      })
+    )
+    .subscribe();
+  }
+
+  getTematica( idtematica: number ) {
+    const tematica = this.listTematica.find( tematica => tematica.idtematica === idtematica );
+    return !tematica ? '' : tematica.nombre;
+  }
+
+  ngOnDestroy(): void {
+    const salir = prompt('Estas seguro de salir, se perderan cambios, el sistema esta intentando una reconexión');
+    if ( salir !== 'si') return;
   }
 
   ngAfterViewInit(): void {

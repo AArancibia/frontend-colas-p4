@@ -30,6 +30,20 @@
     justify-content: space-between;
     border-top: 1px solid #e2e2e2;
     padding: 1rem 1.5rem 0rem 1.5rem;
+
+    &__button {
+      cursor: pointer;
+      &:active, &:focus {
+        //background-image: linear-gradient(to right bottom, #000, #f7f7f7 );
+        font-size: .9rem;
+        font-weight: 400;
+        margin-top: -1rem;
+        padding-top: .6rem;
+        /*
+        margin-left: -.5rem;*/
+        //padding: 10px;
+      }
+    }
   }
 
   &__right {
@@ -53,6 +67,9 @@
 
 [nz-list-item] {
   text-align: center;
-}
 
+  .sin-atender {
+
+  }
+}
 
