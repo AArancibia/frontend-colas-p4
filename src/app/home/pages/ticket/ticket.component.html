@@ -32,7 +32,6 @@
                 <i nz-icon type="upload"></i>
                 <p
                   nz-popover
-                  nzTitle="Title"
                   [(nzVisible)]="visible"
                   (nzVisibleChange)="change($event)"
                   nzTrigger="click"
@@ -41,21 +40,21 @@
                   Derivar
                 </p>
                 <ng-template #contentTemplate>
-                  <nz-input-group nzSearch [nzAddOnAfter]="suffixButton">
+                  <nz-input-group nzSearch [nzSuffix]="suffixIconSearch" >
                     <input type="text"
+                           [nzSize]="'small'"
                            placeholder="Ventanilla a Asignar"
+                           (keyup.enter)="estado == 3 && estadoTicket( 4 )"
                            [(ngModel)]="ventanillaDerivar"
                            nz-input />
                   </nz-input-group>
-                  <ng-template #suffixButton>
-                    <button nz-button nzType="primary"
-                            (click)="estado == 3 && estadoTicket( 4 )"
-                            nzSearch>Derivar</button>
+                  <ng-template #suffixIconSearch>
+                    <i nz-icon type="search"></i>
                   </ng-template>
                 </ng-template>
               </div>
             </ng-template>
-            <div (click)="estadoTicket( 4 )">
+            <div (click)="estado == 4 && estadoTicket( 5 )">
               <i nz-icon nzType="caret-right" nzTheme="fill"></i>
               <p>Siguiente {{ ventanillaDerivar }}</p>
             </div>
