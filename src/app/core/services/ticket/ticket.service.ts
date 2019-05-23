@@ -43,6 +43,10 @@ export class TicketService extends Socket {
     return this.fromEvent('ventanillaAsignadaAlTicket');
   }
 
+  ticketDerivadoAVentanilla() {
+    return this.fromEvent('ticketDerivadoOtraVentanilla');
+  }
+
   obtenerTickets() {
     return this.request( 'GET', 'ticket' );
   }

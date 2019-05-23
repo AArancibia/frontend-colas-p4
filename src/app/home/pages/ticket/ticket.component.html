@@ -28,14 +28,36 @@
               <p>Atender {{ estado }}</p>
             </div>
             <ng-template #derivarTemplate>
-              <div (click)="estado == 2 && estadoTicket( 4 )">
+              <div >
                 <i nz-icon type="upload"></i>
-                <p>Derivar {{ estado }}</p>
+                <p
+                  nz-popover
+                  nzTitle="Title"
+                  [(nzVisible)]="visible"
+                  (nzVisibleChange)="change($event)"
+                  nzTrigger="click"
+                  [nzContent]="contentTemplate"
+                >
+                  Derivar
+                </p>
+                <ng-template #contentTemplate>
+                  <nz-input-group nzSearch [nzAddOnAfter]="suffixButton">
+                    <input type="text"
+                           placeholder="Ventanilla a Asignar"
+                           [(ngModel)]="ventanillaDerivar"
+                           nz-input />
+                  </nz-input-group>
+                  <ng-template #suffixButton>
+                    <button nz-button nzType="primary"
+                            (click)="estado == 3 && estadoTicket( 4 )"
+                            nzSearch>Derivar</button>
+                  </ng-template>
+                </ng-template>
               </div>
             </ng-template>
             <div (click)="estadoTicket( 4 )">
               <i nz-icon nzType="caret-right" nzTheme="fill"></i>
-              <p>Siguiente</p>
+              <p>Siguiente {{ ventanillaDerivar }}</p>
             </div>
           </div>
         </ng-template>

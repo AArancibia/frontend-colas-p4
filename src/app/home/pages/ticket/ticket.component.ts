@@ -22,7 +22,6 @@ import {SnackbarService} from 'ngx-snackbar';
 })
 export class TicketComponent implements OnInit, AfterViewInit, OnDestroy {
   time = distanceInWords( new Date(), new Date() );
-  tickets$: Observable< Ticket[] >;
   listTematica: Tematica[] = [];
   listTicket: any[] = [];
   listaTramites: Tramite[] = [];
@@ -31,6 +30,8 @@ export class TicketComponent implements OnInit, AfterViewInit, OnDestroy {
   ventanilla: any;
   derivar: boolean = false;
   estado: number = -1;
+  ventanillaDerivar: number;
+  visible: boolean;
   constructor(
     private wsSocket: WebsocketService,
     public ticketService: TicketService,
@@ -41,6 +42,14 @@ export class TicketComponent implements OnInit, AfterViewInit, OnDestroy {
 
   }
 
+  clickMe(): void {
+    this.visible = false;
+  }
+
+  change(value: boolean): void {
+    console.log(value);
+  }
+
   ngOnInit() {
     //this.listarTickets();
     this.ventanilla = Number( prompt('Ventanilla' ) );
@@ -48,6 +57,7 @@ export class TicketComponent implements OnInit, AfterViewInit, OnDestroy {
     this.nuevoTicket();
     this.ventanillaAsignadaAlTicket();
     this.listarTematica();
+    this.ticketDerivadoOtraVentanilla();
   }
 
   obtenerListaTickets() {
@@ -117,11 +127,7 @@ export class TicketComponent implements OnInit, AfterViewInit, OnDestroy {
           this.ventanilla,
           detestado,
         )
-          .subscribe(
-            responseList => {
-              console.log( responseList );
-            }
-          );
+          .subscribe();
         break;
       }
       case EstadoTicket.atendido: {
@@ -148,6 +154,7 @@ export class TicketComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.listTicket = [ ...this.listTicket ];
                 console.log( this.listTicket );
                 this.derivar = true;
+                this.llenarInfoTicket();
               }
             ),
           )
@@ -155,12 +162,40 @@ export class TicketComponent implements OnInit, AfterViewInit, OnDestroy {
         break;
       }
       case EstadoTicket.derivado: {
+        const detestado: DetEstadoTicket = {
+          idestado: 4,
+          idticket: this.listTicket[0].idticket,
+        };
+        this.ticketService.asignarVentanillaAndGuardarDetEstadoTicket(
+          detestado.idticket,
+          this.ventanillaDerivar,
+          detestado,
+        )
+          .subscribe();
         break;
       }
       default:
         break;
     }
 
+  }
+
+  ticketDerivadoOtraVentanilla() {
+    this.ticketService.ticketDerivadoAVentanilla()
+      .pipe(
+        tap( ( ticket: Ticket ) => {
+          console.log( ticket );
+          const indexTicket = this.listTicket.findIndex( ( ticketo ) => ticketo.codigo == ticket.codigo );
+          if ( ticket.idventanilla != this.ventanilla ) {
+            this.listTicket.splice( indexTicket, 1 );
+          } else {
+            this.listTicket.splice( 1, 0, ticket );
+          }
+          this.listTicket = [ ...this.listTicket ];
+          this.llenarInfoTicket();
+        }),
+      )
+      .subscribe();
   }
 
   ventanillaAsignadaAlTicket() {
@@ -184,7 +219,7 @@ export class TicketComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   llenarInfoTicket() {
-    console.log( this.listTicket[0] );
+    //console.log( this.listTicket[0] );
     this.mostrarInfoTicket = this.listTicket.length > 0 ? { ...this.listTicket[0].administrado } : {};
     this.idtematica = this.listTicket.length > 0 ? this.listTicket[0].idtematica : -1;
     this.estado = this.listTicket.length > 0 && this.listTicket[0].detestadotickets.length > 0 ? this.listTicket[0].detestadotickets.length : -1;
