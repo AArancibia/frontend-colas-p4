@@ -186,10 +186,26 @@ export class TicketComponent implements OnInit, AfterViewInit, OnDestroy {
         tap( ( derivado: any ) => {
           const ticket = derivado.ticket;
           const oldVentanilla = derivado.oldVentanilla;
-          console.log( ticket );
-          const indexTicket = this.listTicket.findIndex( ( ticketo ) => ticketo.codigo == ticket.codigo );
+          //console.log( ticket );
+          //const indexTicket = this.listTicket.findIndex( ( ticketo ) => ticketo.codigo == ticket.codigo );
+          let utltimoDerivado;
           if ( ticket.idventanilla == this.ventanilla ) {
-            this.listTicket.splice( 1, 0, ticket );
+            this.listTicket.map(
+              ( searchTicket, index, array ) => {
+                if ( searchTicket.detestadotickets.length > 3 ) {
+                  utltimoDerivado = searchTicket;
+                }
+              }
+            );
+            if ( utltimoDerivado ) {
+              const indexUltimoDerivado = this.listTicket.findIndex( ( ticketo ) => ticketo.codigo == utltimoDerivado.codigo );
+              console.log( utltimoDerivado );
+              console.log( indexUltimoDerivado );
+              this.listTicket.splice( indexUltimoDerivado + 1, 0, ticket );
+            } else {
+              this.listTicket.splice( 1, 0, ticket );
+            }
+
           }
           if ( oldVentanilla == this.ventanilla ) {
             this.listTicket.splice( 0, 1 );
