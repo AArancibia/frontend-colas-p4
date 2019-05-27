@@ -54,7 +54,7 @@
                 </ng-template>
               </div>
             </ng-template>
-            <div (click)="estado == 4 && estadoTicket( 5 )">
+            <div (click)="( estado == 3 || estado == 4 ) && estadoTicket( 5 )">
               <i nz-icon nzType="caret-right" nzTheme="fill"></i>
               <p>Siguiente {{ ventanillaDerivar }}</p>
             </div>

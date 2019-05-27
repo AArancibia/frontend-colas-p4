@@ -7,7 +7,6 @@ import {Ticket} from '@app/core/models/ticket.model';
 import {tap} from 'rxjs/operators';
 //import {CreateTicket, LoadTickets} from '@app/features/ticket-store/state/ticket.action';
 //import {AppState} from '@app/features/ticket-store/state/ticket.type';
-import {Observable} from 'rxjs';
 import {Tramite} from '@app/core/models/tramite.model';
 import {Tematica} from '@app/core/models/tematica.model';
 import {TematicaService} from '@app/core/services/tematica/tematica.service';
@@ -130,7 +129,7 @@ export class TicketComponent implements OnInit, AfterViewInit, OnDestroy {
           .subscribe();
         break;
       }
-      case EstadoTicket.atendido: {
+      case EstadoTicket.atendiendo: {
         if ( this.listTicket[0].detestadotickets.length > 2 ) {
           this.snackBar.add({
             msg: 'Ticket atendido o esta siendo atendido',
@@ -173,6 +172,23 @@ export class TicketComponent implements OnInit, AfterViewInit, OnDestroy {
         )
           .subscribe();
         break;
+      }
+      case EstadoTicket.atendido : {
+        const detestado: DetEstadoTicket = {
+          idestado: 5,
+          idticket: this.listTicket[0].idticket,
+        };
+        this.ticketService.guardarNuevoEstado( detestado )
+          .pipe(
+            tap( ( ticket: Ticket ) => {
+              if ( ticket.idventanilla == this.ventanilla ) {
+                this.listTicket.splice( 0 , 1 );
+              }
+              this.listTicket = [ ...this.listTicket ];
+              this.llenarInfoTicket();
+            }),
+          )
+          .subscribe();
       }
       default:
         break;

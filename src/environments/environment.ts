@@ -6,7 +6,7 @@ export const environment = {
   production: false,
   url_server: 'http://localhost:4000/api/',
   url_server_tupa: 'http://localhost:4001/api/',
-  wsUrl: 'http://localhost:8081',
+  wsUrl: 'http://192.168.10.208:8081',
 };
 
 /*
