@@ -14,4 +14,5 @@ export interface Ticket {
   fecha: Date | string;
   fechacorta: Date | string;
   detestadotickets: DetEstadoTicket[];
+  idtramite: number;
 }

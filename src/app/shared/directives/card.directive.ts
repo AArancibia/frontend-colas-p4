@@ -10,6 +10,9 @@ export class CardDirective implements OnInit{
   ) { }
 
   ngOnInit(): void {
-    console.log( this.el.nativeElement.querySelector('ant-list-footer') );
+    const card: any = this.el.nativeElement;
+    console.log( card );
+    //const cardExtraRight: any = card.querySelector('.ant-card-extra');
+    //cardExtraRight.style.width = '100%';
   }
 }

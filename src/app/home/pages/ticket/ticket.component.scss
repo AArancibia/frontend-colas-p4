@@ -74,3 +74,43 @@
   }
 }
 
+.detalle {
+
+  padding: 1rem;
+  font-size: .9rem;
+
+  &__requisitos {
+
+    list-style: none;
+    padding: 0;
+
+    &--item {
+
+    }
+  }
+
+  &__row {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+  }
+
+  &__titulo {
+    font-weight: bold;
+  }
+
+  &__descripcion {
+
+  }
+}
+
+.lista-items {
+  font-size: 1.2rem;
+  &:first-child {
+    font-weight: bold;
+  }
+}
+
+.ant-card-extra .ng-star-inserted {
+  width: 100% !important;
+}

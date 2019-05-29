@@ -39,6 +39,10 @@ export class TicketService extends Socket {
     return this.request( 'POST', 'ticket/detalle', detEstadoTicket );
   }
 
+  actualizarTematicaOrTramite( idticket, data ) {
+    return this.request( 'PUT', `ticket/${ idticket }/tematica`, data );
+  }
+
   ventanillaAsignadaAlTicket() {
     return this.fromEvent('ventanillaAsignadaAlTicket');
   }

@@ -10,7 +10,8 @@
         [nzRenderItem]="item">
         <ng-template #item let-item>
           <nz-list-item appCardticket
-                        [id]="item.codigo"
+                        class="lista-items"
+                        [id]="item[0]"
                         [nzContent]="item.codigo"></nz-list-item>
         </ng-template>
         <ng-template #footer >
@@ -23,9 +24,9 @@
               <i nz-icon nzType="bell" nzTheme="outline"></i>
               <p>Llamar {{ estado }}</p>
             </div>
-            <div  (click)="estado == 2 && estadoTicket( 3 )" *ngIf="!derivar; else derivarTemplate">
+            <div  (click)="estado == 2 && estadoTicket( 3 )" *ngIf="!derivar; else derivarTemplate"> <!-- && atender  -->
               <i nz-icon type="upload"></i>
-              <p>Atender {{ estado }}</p>
+              <p>Atender {{ estado }} {{ derivar }}</p>
             </div>
             <ng-template #derivarTemplate>
               <div >
@@ -54,7 +55,7 @@
                 </ng-template>
               </div>
             </ng-template>
-            <div (click)="( estado == 3 || estado == 4 ) && estadoTicket( 5 )">
+            <div (click)="( estado >= 2 ) && estadoTicket( 5 )">
               <i nz-icon nzType="caret-right" nzTheme="fill"></i>
               <p>Siguiente {{ ventanillaDerivar }}</p>
             </div>
@@ -67,84 +68,203 @@
         <div nz-col [nzXs]="5" [nzSm]="4" [nzMd]="4" [nzLg]="5"  class="card__avatar">
           <nz-avatar [nzSize]="64" nzIcon="user"></nz-avatar>
         </div>
-        <div nz-col [nzXs]="11" [nzSm]="9" [nzMd]="9" [nzLg]="9"  class="card__contribuyente">
+        <div nz-col [nzXs]="11" [nzSm]="9" [nzMd]="11" [nzLg]="11"  class="card__contribuyente">
           <p>{{ mostrarInfoTicket.idcontribuyente }}</p>
           <p>
               {{ mostrarInfoTicket.nombre }} {{ mostrarInfoTicket.apepat }} {{ mostrarInfoTicket.apemat }}
           </p>
           <p>{{ mostrarInfoTicket.nrodoc }}</p>
         </div>
-        <div nz-col [nzXs]="5" [nzSm]="10" [nzMd]="8" [nzLg]="9"  class="card__tematica">
+        <div nz-col [nzXs]="5" [nzSm]="10" [nzMd]="7" [nzLg]="7"  class="card__tematica">
           <p>Temática</p>
           <p>{{ getTematica( idtematica ) }}</p>
+          <div *ngIf="selectTramite > 0">
+            <p>Trámite {{ selectTramite }}</p>
+            <p>{{ getTramite( selectTramite )  }}</p>
+          </div>
         </div>
         <div nz-col [nzXs]="1" [nzSm]="1" [nzMd]="1" [nzLg]="1" >
-          <i nz-icon nzType="edit" nzTheme="outline"></i>
+          <!-- && atender -->
+          <i nz-icon nzType="edit"
+             (click)="mostrarListaTematicas()"
+             *ngIf="( estado > 2 ) ; else iconoDisabled"
+             nzTheme="outline"></i>
+          <!--
+          (nzVisibleChange)="change($event)"
+             nzTrigger="click"
+             [nzPlacement]="'bottom'"
+          nz-popover
+             [(nzVisible)]="visibleTematica"
+          [nzContent]="templateTematica" -->
+          <ng-template #iconoDisabled>
+            <i nz-icon nzType="edit" style="cursor: not-allowed;"></i>
+          </ng-template>
+          <!--<ng-template #templateTematica>
+            <nz-select style="width: 150px;" [(ngModel)]="mostrarTematica"
+                       (ngModelChange)="actualizarTematica( $event )"
+                       nzAllowClear nzPlaceHolder="Choose">
+              <nz-option *ngFor="let tematica of listTematica"
+                         [nzLabel]="tematica.nombre" [nzValue]="tematica.idtematica"></nz-option>
+            </nz-select>
+          </ng-template>-->
         </div>
       </div>
     </ng-template>
   </div>
   <div nz-col [nzXs]="24" [nzMd]="1"></div>
   <div nz-col [nzXs]="24" [nzMd]="24" [nzLg]="12" style="background-color: #ffffff;">
-    <nz-card [nzExtra]="cardHeaderRight" style="height: 90vh;" id="card__right" ><!-- [nzActions]="[actionSetting, actionEdit ]" -->
-      <nz-table #basicTable [nzData]="listaTramites"
-                [nzSize]="'small'"><!-- [nzScroll]="{ y: '400px' }'" -->
-        <thead>
-        <tr>
-          <th>Name</th>
-          <th>Age</th>
-          <th>Address</th>
-          <th>Action</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let tramite of basicTable.data">
-          <td>{{ tramite.descripcion }}</td>
-          <td>{{ tramite.plazo }}</td>
-          <td>{{tramite.precio}}</td>
-          <td>
-            <a>Action 一 {{ tramite.idtramite }}</a>
-            <nz-divider nzType="vertical"></nz-divider>
-            <a>Delete</a>
-          </td>
-        </tr>
-        </tbody>
-      </nz-table>
-      <div class="card__right">
-        <div class="card__right__footer">
-          <div>
-            <i nz-icon type="setting"></i>
-            <p>Imprimir</p>
-          </div>
-          <div>
-            <i nz-icon type="edit"></i>
-            <p>Descargar</p>
-          </div>
-        </div>
-      </div>
-    </nz-card>
-    <ng-template #cardHeaderRight style="width: 100% !important;">
-      <div nz-row>
-        <div nz-col [nzMd]="24">
-          <nz-breadcrumb>
-            <nz-breadcrumb-item>
-              <a>/licencia de edificación</a>
-            </nz-breadcrumb-item>
-          </nz-breadcrumb>
-        </div>
-        <div nz-col [nzMd]="24" style="margin-top: .7rem;">
-          <nz-input-group [nzSuffix]="suffixIconSearch">
-            <input type="text" nz-input placeholder="input search text" />
-          </nz-input-group>
-        </div>
-      </div>
-    </ng-template>
-    <!--<ng-template #actionSetting>
+    <!-- <div [hidden]="vistaDetalle"> -->
+      <nz-card [nzExtra]="cardHeaderRight"
+               [hidden]="( pasos === 2 )"
+               style="height: 90vh;" id="card__right" ><!-- [nzActions]="[actionSetting, actionEdit ]" -->
+        <nz-table
+                  [hidden]="(pasos === 1 || pasos === 2 || idtematica <= 0 )"
+                  #tematicaTable
+                   [nzData]="listTematica"
+                  [nzSize]="'small'"><!-- [nzScroll]="{ y: '400px' }'" -->
+          <thead>
+          <tr>
+            <th>abr</th>
+            <th>Tematica</th>
+            <th>paso</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let tematica of tematicaTable.data | pipeFiltros: inputTematicas : '2'"
+              (click)="actualizarTematica( tematica )"
+              >
+            <td>{{ tematica.abr }}</td>
+            <td>{{ tematica.nombre }}</td>
+            <td>{{ pasos }}</td>
+          </tr>
+          </tbody>
+        </nz-table>
 
-    </ng-template>-->
-    <ng-template #suffixIconSearch>
-      <i nz-icon type="search"></i>
-    </ng-template>
+        <nz-table
+                    [hidden]="(pasos === 0 || pasos === 2 )"
+                    #basicTable
+                   [nzData]="listaTramites"
+                   [nzSize]="'small'"><!-- [nzScroll]="{ y: '400px' }'" -->
+          <thead>
+          <tr>
+            <th>Descripción</th>
+            <th>Plazo</th>
+            <th>Precio</th>
+            <th >Acción</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr
+            (click)="seleccionarTramite( tramite )"
+            *ngFor="let tramite of basicTable.data | pipeFiltros: inputTramites : '1' ">
+            <td>{{ tramite.idtramite }}</td>
+            <td>{{ tramite.descripcion }}</td>
+            <td>{{tramite.precio}}</td>
+          </tr>
+          </tbody>
+        </nz-table>
+
+        <div class="card__right">
+          <div class="card__right__footer">
+            <div>
+              <i nz-icon type="setting"></i>
+              <p>Imprimir</p>
+            </div>
+            <div>
+              <i nz-icon type="edit"></i>
+              <p>Descargar</p>
+            </div>
+          </div>
+        </div>
+      </nz-card>
+      <ng-template #cardHeaderRight style="width: 100% !important;">
+        <div nz-row>
+          <div nz-col [nzMd]="24">
+            <nz-breadcrumb>
+              <nz-breadcrumb-item>
+
+              </nz-breadcrumb-item>
+            </nz-breadcrumb>
+          </div>
+          <div nz-col [nzMd]="24" style="margin-top: .7rem;">
+            <nz-input-group [nzSuffix]="suffixIconSearch">
+              <input type="text"
+                     *ngIf="pasos === 0"
+                     [disabled]="!mostrarTematica"
+                     name="inputTematicas"
+                     [(ngModel)]="inputTematicas"
+                     nz-input placeholder="Filtrar por Tematica" />
+              <input type="text"
+                     *ngIf="pasos === 1"
+                     name="inputTramites"
+                     [(ngModel)]="inputTramites"
+                     nz-input placeholder="Filtrar por tramite" />
+              <!-- (keyup)="filtrarTramites( inputTematicas.value )" -->
+            </nz-input-group>
+          </div>
+        </div>
+      </ng-template>
+      <ng-template #suffixIconSearch>
+        <i nz-icon type="search"></i>
+      </ng-template>
+    <!-- </div> -->
+    <div
+      *ngIf="pasos === 2"
+      class="detalle">
+      <nz-breadcrumb style="margin-bottom: .5rem;">
+        <nz-breadcrumb-item>
+          <a (click)="pasos = 0">/{{ getTematica( idtematica )  }}</a>
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>
+          <a (click)="pasos = 1">{{ getTramite( selectTramite )  }}</a>
+        </nz-breadcrumb-item>
+      </nz-breadcrumb>
+      <h5 class="detalle__titulo">Descripcion del procedimiento</h5>
+      <p class="detalle__descripcion">
+        Hacer breve descripcion del procedimiento objetivo especificar quienes pueden solicitarlo, por lo que deben obtenerlo,
+        cual es entregable y si se encuentra suejto a renovación.
+      </p>
+      <h5 class="detalle__titulo">Requisitos</h5>
+      <ul class="detalle__requisitos">
+        <li class="detalle__requisitos--item">
+          <label nz-checkbox >Requerimiento 1</label>
+        </li>
+        <li class="detalle__requisitos--item">
+          <label nz-checkbox >Requerimiento 2</label>
+        </li>
+        <li class="detalle__requisitos--item">
+          <label nz-checkbox >Requerimiento 3</label>
+        </li>
+        <li class="detalle__requisitos--item">
+          <label nz-checkbox >Requerimiento 4</label>
+        </li>
+      </ul>
+      <h5 class="detalle__titulo">Notas</h5>
+      <p class="detalle__descripcion">colocar las obervaciones o informacion necesaria que facilite el entendimiento del procedimiento</p>
+      <h5 class="detalle__titulo">Canales de Atencion</h5>
+      <p class="detalle__descripcion">Presencial, Virtual, Telefonica</p>
+      <div class="detalle_row">
+        <h5 class="detalle__titulo">Pago por derecho de tramitación</h5>
+        <p class="detalle__descripcion">$/ 500000.00</p>
+      </div>
+      <h5 class="detalle__titulo">Modalidad de Pago</h5>
+      <p>Tarjeta de debito y crédito, agencia bancaria transferencia</p>
+      <div class="detalle_row">
+        <h5 class="detalle__titulo">Plazo</h5>
+        <p class="detalle__descripcion">25 días</p>
+      </div>
+      <div class="detalle_row">
+        <h5 class="detalle__titulo">Calificación</h5>
+        <p class="detalle__descripcion">Aprobación automatica</p>
+      </div>
+      <h5 class="detalle__titulo">Sedes y horarios de atención</h5>
+      <p class="detalle__descripcion">Colacar las sedees</p>
+      <h5 class="detalle__titulo">Instancias de resolución de recursos</h5>
+      <p class="detalle__descripcion">Reconsideracion unidad - presentacion 25 dias/ respuesta 25 dás</p>
+      <p class="detalle__descripcion">Apelación unidad - presentacion 25 dias/ respuesta 25 dias</p>
+      <h5 class="detalle__titulo">Base Legal</h5>
+      <p class="detalle__descripcion">colocar base legal del procedimiento</p>
+    </div>
   </div>
 </div>
 

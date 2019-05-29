@@ -7,6 +7,7 @@ import { CardticketDirective } from './directives/cardticket.directive';
 import { CardDirective } from './directives/card.directive';
 import {NotificationComponent} from './components/notification/notification.component';
 import {SnackbarModule} from 'ngx-snackbar';
+import {TramitesPipe} from '@app/shared/pipes/tramites.pipe';
 
 @NgModule({
   declarations: [
@@ -16,6 +17,7 @@ import {SnackbarModule} from 'ngx-snackbar';
     CardticketDirective,
     CardDirective,
     NotificationComponent,
+    TramitesPipe,
   ],
   imports: [
     CommonModule,
@@ -28,6 +30,7 @@ import {SnackbarModule} from 'ngx-snackbar';
     NotificationComponent,
     CardticketDirective,
     CardDirective,
+    TramitesPipe,
   ]
 })
 export class SharedModule { }
