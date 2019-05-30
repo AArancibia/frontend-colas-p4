@@ -100,7 +100,12 @@ export class TicketComponent implements OnInit, AfterViewInit {
         tap( ( ticket: Ticket ) => {
           ticket.detestadotickets.splice( 0 );
           ticket.detestadotickets.push( { idticket: ticket.idticket, idestado: 1 });
-          this.listTicket = [ ...this.listTicket, ticket];
+          if ( ticket.preferencial ) {
+            this.listTicket.splice( 1, 0, ticket );
+          } else {
+            this.listTicket = [ ...this.listTicket, ticket];
+          }
+          this.listTicket = [ ...this.listTicket ];
         }),
         tap( () => this.llenarInfoTicket() )
       ).subscribe();

@@ -141,7 +141,7 @@
         </nz-table>
 
         <nz-table
-                    [hidden]="(pasos === 0 || pasos === 2 )"
+                    [hidden]="(pasos === 0 || pasos === 2 || estado < 3 )"
                     #basicTable
                    [nzData]="listaTramites"
                    [nzSize]="'small'"><!-- [nzScroll]="{ y: '400px' }'" -->
@@ -190,13 +190,14 @@
             <nz-input-group [nzSuffix]="suffixIconSearch">
               <input type="text"
                      *ngIf="pasos === 0"
-                     [disabled]="!mostrarTematica"
                      name="inputTematicas"
+                     [disabled]="( estado < 3 )"
                      [(ngModel)]="inputTematicas"
                      nz-input placeholder="Filtrar por Tematica" />
               <input type="text"
                      *ngIf="pasos === 1"
                      name="inputTramites"
+                     [disabled]="( estado < 3 )"
                      [(ngModel)]="inputTramites"
                      nz-input placeholder="Filtrar por tramite" />
               <!-- (keyup)="filtrarTramites( inputTematicas.value )" -->
@@ -263,8 +264,25 @@
       <p class="detalle__descripcion">Reconsideracion unidad - presentacion 25 dias/ respuesta 25 dás</p>
       <p class="detalle__descripcion">Apelación unidad - presentacion 25 dias/ respuesta 25 dias</p>
       <h5 class="detalle__titulo">Base Legal</h5>
-      <p class="detalle__descripcion">colocar base legal del procedimiento</p>
+      <p class="detalle__descripcion u-margin-bottom-medium">colocar base legal del procedimiento</p>
+      <div class="card__right" style="margin-top: 1rem;">
+        <div class="card__right__footer">
+          <div>
+            <i nz-icon type="printer"></i>
+            <p>Imprimir</p>
+          </div>
+          <div>
+            <i nz-icon type="download"></i>
+            <p>Descargar</p>
+          </div>
+          <div>
+            <i nz-icon type="printer"></i>
+            <p>Imprimir Satisfacción</p>
+          </div>
+        </div>
+      </div>
     </div>
+
   </div>
 </div>
 
