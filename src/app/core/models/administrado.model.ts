@@ -1,9 +1,11 @@
-export interface Administrado {
-    idadministrado: number;
-    nrodoc: string;
-    tipodoc: string;
-    nombre: string;
-    apepat: string;
-    apemat: string;
-    idcontribuyente: number;
+export class Administrado {
+    constructor(
+      public id?: number,
+      public nrodoc?: string,
+      public tipodoc?: string,
+      public nombre?: string,
+      public apepat?: string,
+      public apemat?: string,
+      public idcontribuyente?: number,
+    ) {}
 }

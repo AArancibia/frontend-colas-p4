@@ -31,28 +31,16 @@ export class TicketService extends Socket {
   }
 
   // Asignamos la ventanilla en Ticket y guardamos nuevo registro en DetEstadoTicket
-  asignarVentanillaAndGuardarDetEstadoTicket( idticket: number, idventanilla: number, detestadoticket: DetEstadoTicket ) {
-    return this.request( 'POST', `ticket/${ idticket }/ventanilla/${ idventanilla }`, detestadoticket );
+  asignarVentanilla( idticket: number, idventanilla: number ) {
+    return this.request( 'PUT', `ticket/${ idticket }/asignar/${ idventanilla }` );
   }
 
-  guardarNuevoEstado( detEstadoTicket: DetEstadoTicket ) {
-    return this.request( 'POST', 'ticket/detalle', detEstadoTicket );
+  guardarNuevoEstado( idticket: number, idestado: number ) {
+    return this.request( 'POST', `${ idticket }/estado/${ idestado }` );
   }
 
   actualizarTematicaOrTramite( idticket, data ) {
     return this.request( 'PUT', `ticket/${ idticket }/tematica`, data );
-  }
-
-  ventanillaAsignadaAlTicket() {
-    return this.fromEvent('ventanillaAsignadaAlTicket');
-  }
-
-  ticketDerivadoAVentanilla() {
-    return this.fromEvent('ticketDerivadoOtraVentanilla');
-  }
-
-  obtenerTickets() {
-    return this.request( 'GET', 'ticket' );
   }
 
   obtenerTicketsDia() {
@@ -61,8 +49,20 @@ export class TicketService extends Socket {
     });
   }
 
+  ventanillaAsignadaAlTicket() {
+    return this.fromEvent('ventanillaAsignadaAlTicket');
+  }
+
+  nuevoEstadoTicket() {
+    return this.fromEvent('[TICKET] NUEVO ESTADO');
+  }
+
+  ticketDerivadoAVentanilla() {
+    return this.fromEvent('ticketDerivadoOtraVentanilla');
+  }
+
   nuevoTicket() {
-    return this.fromEvent('nuevoTicket' );
+    return this.fromEvent('[TICKET] Nuevo' );
   }
 
   // Esto va para el administrador

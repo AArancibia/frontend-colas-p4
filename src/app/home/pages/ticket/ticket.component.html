@@ -20,16 +20,21 @@
               <i nz-icon nzType="minus-circle" nzTheme="outline"></i>
               <p>Ocupado</p>
             </div>
-            <div (click)="( estado == 1 || estado == 2 ) && estadoTicket( 2 )" class="card__footer__button">
+            <div
+              [ngClass]="{ 'active': activo === 2 }"
+              (click)="estadosTickets( 2 )"
+              class="card__footer__button">
               <i nz-icon nzType="bell" nzTheme="outline"></i>
-              <p>Llamar {{ estado }}</p>
+              <p>Llamar </p>
             </div>
-            <div  (click)="estado == 2 && estadoTicket( 3 )" *ngIf="!derivar; else derivarTemplate"> <!-- && atender  -->
+            <div
+              (click)="estadosTickets( 3 )"
+              [ngClass]="{ 'active': activo === 3 }" *ngIf="!derivar; else derivarTemplate"> <!-- && atender  -->
               <i nz-icon type="upload"></i>
-              <p>Atender {{ estado }} {{ derivar }}</p>
+              <p>Atender </p>
             </div>
             <ng-template #derivarTemplate>
-              <div >
+              <div class="active" >
                 <i nz-icon type="upload"></i>
                 <p
                   nz-popover
@@ -45,7 +50,6 @@
                     <input type="text"
                            [nzSize]="'small'"
                            placeholder="Ventanilla a Asignar"
-                           (keyup.enter)="estado == 3 && estadoTicket( 4 )"
                            [(ngModel)]="ventanillaDerivar"
                            nz-input />
                   </nz-input-group>
@@ -55,9 +59,9 @@
                 </ng-template>
               </div>
             </ng-template>
-            <div (click)="( estado >= 2 ) && estadoTicket( 5 )">
+            <div>
               <i nz-icon nzType="caret-right" nzTheme="fill"></i>
-              <p>Siguiente {{ ventanillaDerivar }}</p>
+              <p>Siguiente </p>
             </div>
           </div>
         </ng-template>
@@ -69,25 +73,25 @@
           <nz-avatar [nzSize]="64" nzIcon="user"></nz-avatar>
         </div>
         <div nz-col [nzXs]="11" [nzSm]="9" [nzMd]="11" [nzLg]="11"  class="card__contribuyente">
-          <p>{{ mostrarInfoTicket.idcontribuyente }}</p>
+          <p>{{ mostrarInfoAdministrado.idcontribuyente }}</p>
           <p>
-              {{ mostrarInfoTicket.nombre }} {{ mostrarInfoTicket.apepat }} {{ mostrarInfoTicket.apemat }}
+              {{ mostrarInfoAdministrado.nombre }} {{ mostrarInfoAdministrado.apepat }} {{ mostrarInfoAdministrado.apemat }}
           </p>
-          <p>{{ mostrarInfoTicket.nrodoc }}</p>
+          <p>{{ mostrarInfoAdministrado.nrodoc }}</p>
+          <p>{{ selectTicket ? selectTicket.codigo : '' }}</p>
         </div>
         <div nz-col [nzXs]="5" [nzSm]="10" [nzMd]="7" [nzLg]="7"  class="card__tematica">
           <p>Temática</p>
-          <p>{{ getTematica( idtematica ) }}</p>
-          <div *ngIf="selectTramite > 0">
-            <p>Trámite {{ selectTramite }}</p>
-            <p>{{ getTramite( selectTramite )  }}</p>
-          </div>
+          <p>{{ selectTicket ? getTematica( selectTicket.idtematica ) : '' }}</p>
+          <p >{{ idtramite ? 'Trámite' : '' }}</p>
+          <p>{{ idtramite ? getTramite( idtramite ) : '' }}</p>
         </div>
         <div nz-col [nzXs]="1" [nzSm]="1" [nzMd]="1" [nzLg]="1" >
           <!-- && atender -->
+          <!-- (click)="mostrarListaTematicas()" -->
           <i nz-icon nzType="edit"
-             (click)="mostrarListaTematicas()"
              *ngIf="( estado > 2 ) ; else iconoDisabled"
+             (click)="pasos = 0"
              nzTheme="outline"></i>
           <!--
           (nzVisibleChange)="change($event)"
@@ -130,9 +134,10 @@
           </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let tematica of tematicaTable.data | pipeFiltros: inputTematicas : '2'"
-              (click)="actualizarTematica( tematica )"
-              >
+          <tr
+            *ngFor="let tematica of tematicaTable.data | pipeFiltros: inputTematicas : '2'"
+            (click)="listarTramitePorTematica( tematica.idtematica )"
+          >
             <td>{{ tematica.abr }}</td>
             <td>{{ tematica.nombre }}</td>
             <td>{{ pasos }}</td>
@@ -141,10 +146,8 @@
         </nz-table>
 
         <nz-table
-                    [hidden]="(pasos === 0 || pasos === 2 || estado < 3 )"
-                    #basicTable
-                   [nzData]="listaTramites"
-                   [nzSize]="'small'"><!-- [nzScroll]="{ y: '400px' }'" -->
+          [hidden]="( pasos === 0 )"
+          #basicTable [nzData]="listaTramites" [nzSize]="'small'"><!-- [nzScroll]="{ y: '400px' }'" -->
           <thead>
           <tr>
             <th>Descripción</th>
@@ -155,8 +158,9 @@
           </thead>
           <tbody>
           <tr
-            (click)="seleccionarTramite( tramite )"
-            *ngFor="let tramite of basicTable.data | pipeFiltros: inputTramites : '1' ">
+            *ngFor="let tramite of basicTable.data | pipeFiltros: inputTramites : '1' "
+            (click)="mostrarDetalleTramite( tramite.idtramite )"
+          >
             <td>{{ tramite.idtramite }}</td>
             <td>{{ tramite.descripcion }}</td>
             <td>{{tramite.precio}}</td>
@@ -191,13 +195,11 @@
               <input type="text"
                      *ngIf="pasos === 0"
                      name="inputTematicas"
-                     [disabled]="( estado < 3 )"
                      [(ngModel)]="inputTematicas"
                      nz-input placeholder="Filtrar por Tematica" />
               <input type="text"
                      *ngIf="pasos === 1"
                      name="inputTramites"
-                     [disabled]="( estado < 3 )"
                      [(ngModel)]="inputTramites"
                      nz-input placeholder="Filtrar por tramite" />
               <!-- (keyup)="filtrarTramites( inputTematicas.value )" -->
@@ -214,57 +216,56 @@
       class="detalle">
       <nz-breadcrumb style="margin-bottom: .5rem;">
         <nz-breadcrumb-item>
-          <a (click)="pasos = 0">/{{ getTematica( idtematica )  }}</a>
+          <a (click)="pasos = 0">/{{ getTematica( selectTicket.idtematica )  }}</a>
         </nz-breadcrumb-item>
         <nz-breadcrumb-item>
-          <a (click)="pasos = 1">{{ getTramite( selectTramite )  }}</a>
+          <a (click)="pasos = 1">{{ getTramite( idtramite )  }}</a>
         </nz-breadcrumb-item>
       </nz-breadcrumb>
-      <h5 class="detalle__titulo">Descripcion del procedimiento</h5>
-      <p class="detalle__descripcion">
-        Hacer breve descripcion del procedimiento objetivo especificar quienes pueden solicitarlo, por lo que deben obtenerlo,
-        cual es entregable y si se encuentra suejto a renovación.
-      </p>
-      <h5 class="detalle__titulo">Requisitos</h5>
-      <ul class="detalle__requisitos">
-        <li class="detalle__requisitos--item">
-          <label nz-checkbox >Requerimiento 1</label>
-        </li>
-        <li class="detalle__requisitos--item">
-          <label nz-checkbox >Requerimiento 2</label>
-        </li>
-        <li class="detalle__requisitos--item">
-          <label nz-checkbox >Requerimiento 3</label>
-        </li>
-        <li class="detalle__requisitos--item">
-          <label nz-checkbox >Requerimiento 4</label>
-        </li>
-      </ul>
-      <h5 class="detalle__titulo">Notas</h5>
-      <p class="detalle__descripcion">colocar las obervaciones o informacion necesaria que facilite el entendimiento del procedimiento</p>
-      <h5 class="detalle__titulo">Canales de Atencion</h5>
-      <p class="detalle__descripcion">Presencial, Virtual, Telefonica</p>
-      <div class="detalle_row">
-        <h5 class="detalle__titulo">Pago por derecho de tramitación</h5>
-        <p class="detalle__descripcion">$/ 500000.00</p>
+      <div *ngFor="let detalleTramite of detallesTramite">
+        <h5 class="detalle__titulo">Descripción del Procedimiento</h5>
+        <p class="detalle__descripcion">
+          {{ detalleTramite.descripcion }}
+        </p>
+        <div *ngFor="let caso of detalleTramite.casos">
+          {{ caso.nombre }}
+          <h5 class="detalle__titulo">Requisitos</h5>
+          <ul class="detalle__requisitos" >
+            <li class="detalle__requisitos--item" *ngFor="let requisitos of caso.requisitos">
+              <label nz-checkbox >{{ requisitos.descripcion }}</label>
+            </li>
+          </ul>
+        </div>
+        <h5 class="detalle__titulo">Notas</h5>
+        <p class="detalle__descripcion">colocar las obervaciones o informacion necesaria que facilite el entendimiento del procedimiento</p>
+        <h5 class="detalle__titulo">Canales de Atencion</h5>
+        <p class="detalle__descripcion">Presencial, Virtual, Telefonica</p>
+        <div class="detalle_row">
+          <h5 class="detalle__titulo">Pago por derecho de tramitación</h5>
+          <p class="detalle__descripcion">$/ 500000.00</p>
+        </div>
+        <h5 class="detalle__titulo">Modalidad de Pago</h5>
+        <p>Tarjeta de debito y crédito, agencia bancaria transferencia</p>
+        <div class="detalle_row">
+          <h5 class="detalle__titulo">Plazo</h5>
+          <p class="detalle__descripcion">25 días</p>
+        </div>
+        <div class="detalle_row">
+          <h5 class="detalle__titulo">Calificación</h5>
+          <p class="detalle__descripcion">Aprobación automatica</p>
+        </div>
+        <h5 class="detalle__titulo">Sedes y horarios de atención</h5>
+        <p class="detalle__descripcion">Colacar las sedees</p>
+        <h5 class="detalle__titulo">Instancias de resolución de recursos</h5>
+        <p class="detalle__descripcion">Reconsideracion unidad - presentacion 25 dias/ respuesta 25 dás</p>
+        <p class="detalle__descripcion">Apelación unidad - presentacion 25 dias/ respuesta 25 dias</p>
+        <h5 class="detalle__titulo">Base Legal</h5>
+        <div class="u-margin-bottom-medium">
+          <p class="detalle__descripcion" *ngFor="let blegales of detalleTramite.baseslegales">
+            {{ blegales.descripcion }}
+          </p>
+        </div>
       </div>
-      <h5 class="detalle__titulo">Modalidad de Pago</h5>
-      <p>Tarjeta de debito y crédito, agencia bancaria transferencia</p>
-      <div class="detalle_row">
-        <h5 class="detalle__titulo">Plazo</h5>
-        <p class="detalle__descripcion">25 días</p>
-      </div>
-      <div class="detalle_row">
-        <h5 class="detalle__titulo">Calificación</h5>
-        <p class="detalle__descripcion">Aprobación automatica</p>
-      </div>
-      <h5 class="detalle__titulo">Sedes y horarios de atención</h5>
-      <p class="detalle__descripcion">Colacar las sedees</p>
-      <h5 class="detalle__titulo">Instancias de resolución de recursos</h5>
-      <p class="detalle__descripcion">Reconsideracion unidad - presentacion 25 dias/ respuesta 25 dás</p>
-      <p class="detalle__descripcion">Apelación unidad - presentacion 25 dias/ respuesta 25 dias</p>
-      <h5 class="detalle__titulo">Base Legal</h5>
-      <p class="detalle__descripcion u-margin-bottom-medium">colocar base legal del procedimiento</p>
       <div class="card__right" style="margin-top: 1rem;">
         <div class="card__right__footer">
           <div>

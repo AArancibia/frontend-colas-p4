@@ -28,6 +28,7 @@
     flex-direction: row;
     flex-wrap: nowrap;
     justify-content: space-between;
+    align-items: center;
     border-top: 1px solid #e2e2e2;
     padding: 1rem 1.5rem 0rem 1.5rem;
 
@@ -113,4 +114,10 @@
 
 .ant-card-extra .ng-star-inserted {
   width: 100% !important;
+}
+.active {
+  color: white;
+  background-color: mediumseagreen;
+  margin-top: -1rem;
+  padding: .8rem;
 }
