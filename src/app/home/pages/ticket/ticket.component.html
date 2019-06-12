@@ -34,7 +34,7 @@
               <p>Atender </p>
             </div>
             <ng-template #derivarTemplate>
-              <div class="active" >
+              <div>
                 <i nz-icon type="upload"></i>
                 <p
                   nz-popover
@@ -47,9 +47,10 @@
                 </p>
                 <ng-template #contentTemplate>
                   <nz-input-group nzSearch [nzSuffix]="suffixIconSearch" >
-                    <input type="text"
+                    <input type="number"
                            [nzSize]="'small'"
                            placeholder="Ventanilla a Asignar"
+                           (keyup.enter)="estadosTickets( 5 )"
                            [(ngModel)]="ventanillaDerivar"
                            nz-input />
                   </nz-input-group>
@@ -59,7 +60,8 @@
                 </ng-template>
               </div>
             </ng-template>
-            <div>
+            <div
+              (click)="estadosTickets( 4 )">
               <i nz-icon nzType="caret-right" nzTheme="fill"></i>
               <p>Siguiente </p>
             </div>

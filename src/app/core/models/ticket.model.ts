@@ -15,4 +15,5 @@ export interface Ticket {
   fechacorta: Date | string;
   detestadotickets: DetEstadoTicket[];
   idtramite: number;
+  estadosIds: any[];
 }

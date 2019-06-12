@@ -36,7 +36,13 @@ export class TicketService extends Socket {
   }
 
   guardarNuevoEstado( idticket: number, idestado: number ) {
-    return this.request( 'POST', `${ idticket }/estado/${ idestado }` );
+    return this.request( 'POST', `ticket/${ idticket }/estado/${ idestado }` );
+  }
+
+  derivarTicket(
+    idticket: number, idventanilla: number,
+  ) {
+    return this.request( 'POST', `ticket/${ idticket }/derivar/${ idventanilla }` );
   }
 
   actualizarTematicaOrTramite( idticket, data ) {
@@ -57,8 +63,8 @@ export class TicketService extends Socket {
     return this.fromEvent('[TICKET] NUEVO ESTADO');
   }
 
-  ticketDerivadoAVentanilla() {
-    return this.fromEvent('ticketDerivadoOtraVentanilla');
+  ticketDerivado() {
+    return this.fromEvent('[TICKET] DERIVADO');
   }
 
   nuevoTicket() {

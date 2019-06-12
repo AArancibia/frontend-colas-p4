@@ -10,6 +10,7 @@ import {TematicaService} from '@app/core/services/tematica/tematica.service';
 import {SnackbarService} from 'ngx-snackbar';
 import {TramiteService} from '@app/core/services/tramite/tramite.service';
 import {Administrado} from '@app/core/models/administrado.model';
+import {tick} from '@angular/core/testing';
 
 @Component({
   selector: 'app-ticket',
@@ -27,7 +28,7 @@ export class TicketComponent implements OnInit, AfterViewInit {
   ventanilla: any;
   derivar: boolean = false;
   estado: number = -1;
-  ventanillaDerivar: number;
+  ventanillaDerivar: any;
   visible: boolean;
   visibleTematica: boolean;
   inputTramites: string;
@@ -55,6 +56,7 @@ export class TicketComponent implements OnInit, AfterViewInit {
     this.nuevoTicket();
     this.ventanillaAsignadaAlTicket();
     this.nuevoEstadoTicket();
+    this.ticketDerivado();
   }
 
   listarTickets() {
@@ -89,24 +91,91 @@ export class TicketComponent implements OnInit, AfterViewInit {
       // LLAMANDO
       case 2: {
         this.ticketService.asignarVentanilla( this.selectTicket.id, this.ventanilla )
+          .pipe(
+            tap( () => this.activo = estado ),
+          )
           .subscribe();
         return;
       }
       // ATENDIENDO
       case 3: {
-        this.ticketService.guardarNuevoEstado( this.selectTicket.id, this.ventanilla )
+        this.ticketService.guardarNuevoEstado( this.selectTicket.id, 3 )
+          .pipe(
+            tap( () => {
+              this.derivar = true;
+              this.activo = estado;
+            }),
+          )
+          .subscribe();
+        return;
+      }
+      // ATENDIDO
+      case 4: {
+        this.ticketService.guardarNuevoEstado( this.selectTicket.id, 4 )
+          .pipe(
+            tap( () => {
+              this.activo = 0;
+              this.derivar = false;
+            }),
+          )
+          .subscribe();
+        return;
+      }
+      // DERIVADO
+      case 5: {
+        if ( this.ventanillaDerivar == 0 ) return;
+        this.ticketService.derivarTicket( this.selectTicket.id, this.ventanillaDerivar )
+          .pipe(
+            tap( () => {
+              this.activo = 0;
+              this.ventanillaDerivar = 0;
+            }),
+          )
           .subscribe();
         return;
       }
     }
   }
 
+  ticketDerivado() {
+    this.ticketService.ticketDerivado()
+      .pipe(
+        tap(
+          ( derivado: any ) => {
+            console.log( derivado );
+            const ticket: Ticket = derivado.ticketaEmitir;
+            const ventanillaAntigua = derivado.ventanillaAntigua;
+            if ( ticket.idventanilla == this.ventanilla ) {
+              this.listTicket.splice( 1 , 0, ticket );
+            }
+            if ( this.ventanilla == ventanillaAntigua ) {
+              const ticketaSacar = this.listTicket.findIndex( ( item: Ticket ) => item.codigo === ticket.codigo );
+              this.listTicket.splice( ticketaSacar, 1 );
+              this.derivar = false;
+            }
+            this.listTicket = [ ...this.listTicket ];
+            this.datosTicket( this.listTicket[ 0 ] );
+          }
+        ),
+      )
+      .subscribe();
+  }
+
   nuevoEstadoTicket() {
     this.ticketService.nuevoEstadoTicket()
       .pipe(
         tap( ( ticket: Ticket ) => {
+          console.log( ticket );
           const indexTicketAtendido = this.listTicket.findIndex( ( item: Ticket ) => item.codigo === ticket.codigo  );
-          this.listTicket.splice( indexTicketAtendido, 1, ticket );
+          if ( ticket.idventanilla === this.ventanilla ) {
+            this.listTicket.splice( indexTicketAtendido, 1, ticket );
+            for ( let i = 0; i <= ticket.estadosIds.length ; i++ ) {
+              if ( ticket.estadosIds[ i ] == 4 || ticket.estadosIds[ i ] == 6 ) {
+                this.listTicket.splice( indexTicketAtendido, 1 );
+                break;
+              }
+            }
+          }
           this.listTicket = [ ...this.listTicket ];
           this.datosTicket( this.listTicket[ 0 ] );
         }),
@@ -121,8 +190,11 @@ export class TicketComponent implements OnInit, AfterViewInit {
           ( ticket: Ticket ) => {
             console.log( ticket );
             const indexTicket = this.listTicket.findIndex( ( item ) => item.codigo == ticket.codigo );
+            console.log( indexTicket );
             if ( ticket.idventanilla != this.ventanilla ) {
-              this.listTicket.splice( indexTicket , 1 );
+              if ( indexTicket > -1 ) {
+                this.listTicket.splice( indexTicket , 1 );
+              }
             } else {
               this.listTicket.splice( indexTicket , 1, ticket );
             }
@@ -135,9 +207,13 @@ export class TicketComponent implements OnInit, AfterViewInit {
   }
 
   datosTicket( ticket: Ticket ) {
-    console.log( ticket );
+    //console.log( ticket );
     this.selectTicket = ticket;
-    this.mostrarInfoAdministrado = { ...this.selectTicket.administrado };
+    if ( ticket ) {
+      this.mostrarInfoAdministrado = { ...this.selectTicket.administrado };
+    } else {
+      this.mostrarInfoAdministrado = {};
+    }
   }
 
   getTematica( idtematica ) {
