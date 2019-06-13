@@ -20,8 +20,8 @@
               <i nz-icon nzType="minus-circle" nzTheme="outline"></i>
               <p>Ocupado</p>
             </div>
+            <!--[ngClass]="{ 'active': activo === 2 }"-->
             <div
-              [ngClass]="{ 'active': activo === 2 }"
               (click)="estadosTickets( 2 )"
               class="card__footer__button">
               <i nz-icon nzType="bell" nzTheme="outline"></i>
@@ -80,7 +80,7 @@
               {{ mostrarInfoAdministrado.nombre }} {{ mostrarInfoAdministrado.apepat }} {{ mostrarInfoAdministrado.apemat }}
           </p>
           <p>{{ mostrarInfoAdministrado.nrodoc }}</p>
-          <p>{{ selectTicket ? selectTicket.codigo : '' }}</p>
+          <p>{{ validacionEstados ? validacionEstados.estadoticketId : '' }}</p>
         </div>
         <div nz-col [nzXs]="5" [nzSm]="10" [nzMd]="7" [nzLg]="7"  class="card__tematica">
           <p>Temática</p>
@@ -92,7 +92,7 @@
           <!-- && atender -->
           <!-- (click)="mostrarListaTematicas()" -->
           <i nz-icon nzType="edit"
-             *ngIf="( estado > 2 ) ; else iconoDisabled"
+             *ngIf="derivar ; else iconoDisabled"
              (click)="pasos = 0"
              nzTheme="outline"></i>
           <!--

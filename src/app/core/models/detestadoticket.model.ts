@@ -1,7 +1,6 @@
-export class DetEstadoTicket {
-    constructor(
-        public idticket?: number,
-        public idestado?: number,
-        //public fechahora?: Date | string,
-    ) {}
+export interface DetEstadoTicket {
+  ticketId: number;
+  estadoticketId: number;
+  fecha: Date | string;
+  identificador: string;
 }

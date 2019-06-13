@@ -11,6 +11,7 @@ import {SnackbarService} from 'ngx-snackbar';
 import {TramiteService} from '@app/core/services/tramite/tramite.service';
 import {Administrado} from '@app/core/models/administrado.model';
 import {tick} from '@angular/core/testing';
+import {DetEstadoTicket} from '@app/core/models/detestadoticket.model';
 
 @Component({
   selector: 'app-ticket',
@@ -23,6 +24,7 @@ export class TicketComponent implements OnInit, AfterViewInit {
   listaTramites: Tramite[] = [];
   mostrarInfoAdministrado: Administrado = new Administrado();
   selectTicket: Ticket;
+  validacionEstados: DetEstadoTicket;
   idtematica: number;
   idtramite: number;
   ventanilla: any;
@@ -34,7 +36,6 @@ export class TicketComponent implements OnInit, AfterViewInit {
   inputTramites: string;
   inputTematicas: string;
   pasos: number = 0;
-  selectTramite: number = 0;
   mostrarTematica: string;
   detallesTramite: any;
   activo: number = 0;
@@ -63,8 +64,9 @@ export class TicketComponent implements OnInit, AfterViewInit {
     this.ticketService.obtenerTicketsDia()
       .pipe(
         tap( ( tickets: Ticket[] ) => {
-          this.listTicket = tickets.filter( ticket => ticket.idventanilla == this.ventanilla || !ticket.idventanilla );
-          if ( tickets.length > 0 ) this.datosTicket( tickets[ 0 ] );
+          console.log( tickets );
+          this.listTicket = tickets.length > 0 ? tickets.filter( ticket => ticket.idventanilla == this.ventanilla || !ticket.idventanilla ) : [];
+          if ( this.listTicket.length > 0 ) this.datosTicket( this.listTicket[ 0 ] );
         }),
       )
       .subscribe();
@@ -90,6 +92,7 @@ export class TicketComponent implements OnInit, AfterViewInit {
     switch ( estado ) {
       // LLAMANDO
       case 2: {
+        if ( this.validacionEstados.estadoticketId === 2 || this.validacionEstados.estadoticketId === 3 ) return;
         this.ticketService.asignarVentanilla( this.selectTicket.id, this.ventanilla )
           .pipe(
             tap( () => this.activo = estado ),
@@ -99,6 +102,7 @@ export class TicketComponent implements OnInit, AfterViewInit {
       }
       // ATENDIENDO
       case 3: {
+        if ( this.validacionEstados.estadoticketId !== 2 ) return;
         this.ticketService.guardarNuevoEstado( this.selectTicket.id, 3 )
           .pipe(
             tap( () => {
@@ -111,6 +115,7 @@ export class TicketComponent implements OnInit, AfterViewInit {
       }
       // ATENDIDO
       case 4: {
+        if ( this.validacionEstados.estadoticketId === 1 ) return;
         this.ticketService.guardarNuevoEstado( this.selectTicket.id, 4 )
           .pipe(
             tap( () => {
@@ -165,12 +170,12 @@ export class TicketComponent implements OnInit, AfterViewInit {
     this.ticketService.nuevoEstadoTicket()
       .pipe(
         tap( ( ticket: Ticket ) => {
-          console.log( ticket );
           const indexTicketAtendido = this.listTicket.findIndex( ( item: Ticket ) => item.codigo === ticket.codigo  );
           if ( ticket.idventanilla === this.ventanilla ) {
             this.listTicket.splice( indexTicketAtendido, 1, ticket );
             for ( let i = 0; i <= ticket.estadosIds.length ; i++ ) {
-              if ( ticket.estadosIds[ i ] == 4 || ticket.estadosIds[ i ] == 6 ) {
+              if ( ticket.estadosIds[ i ] === 4 || ticket.estadosIds[ i ] === 6 ) {
+                console.log( 'ya no entras' );
                 this.listTicket.splice( indexTicketAtendido, 1 );
                 break;
               }
@@ -188,7 +193,7 @@ export class TicketComponent implements OnInit, AfterViewInit {
       .pipe(
         tap(
           ( ticket: Ticket ) => {
-            console.log( ticket );
+            //console.log( ticket );
             const indexTicket = this.listTicket.findIndex( ( item ) => item.codigo == ticket.codigo );
             console.log( indexTicket );
             if ( ticket.idventanilla != this.ventanilla ) {
@@ -207,12 +212,21 @@ export class TicketComponent implements OnInit, AfterViewInit {
   }
 
   datosTicket( ticket: Ticket ) {
-    //console.log( ticket );
-    this.selectTicket = ticket;
+    //console.log( ticket )
     if ( ticket ) {
+      this.selectTicket = ticket;
       this.mostrarInfoAdministrado = { ...this.selectTicket.administrado };
+      this.listarTramitePorTematica( this.selectTicket.idtematica );
     } else {
       this.mostrarInfoAdministrado = {};
+      this.selectTicket = null;
+      this.validacionEstados = null;
+    }
+    console.log( this.selectTicket.detEstados );
+    this.selectTicket.detEstados.sort( ( a, b ) => new Date( b.fecha ).getTime() -  new Date( a.fecha ).getTime() );
+    this.validacionEstados = this.selectTicket.detEstados[ 0 ];
+    if ( this.validacionEstados.estadoticketId === 3 ) {
+      this.derivar = true;
     }
   }
 

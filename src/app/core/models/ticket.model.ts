@@ -13,7 +13,7 @@ export interface Ticket {
   correlativo: number;
   fecha: Date | string;
   fechacorta: Date | string;
-  detestadotickets: DetEstadoTicket[];
+  detEstados: DetEstadoTicket[];
   idtramite: number;
   estadosIds: any[];
 }

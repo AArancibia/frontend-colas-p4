@@ -3,8 +3,6 @@ import {Socket} from 'ngx-socket-io';
 import {environment} from '@env/environment';
 import {HttpClient} from '@angular/common/http';
 import {Observable, forkJoin} from 'rxjs';
-import { DetEstadoTicket } from '@app/core/models/detestadoticket.model';
-import {tick} from '@angular/core/testing';
 
 @Injectable()
 export class TicketService extends Socket {
