@@ -24,6 +24,6 @@ export class TramiteService {
   }
 
   obtenerDetallesDeTramite( idtramite: number ) {
-    return this.request( 'GET', `tramite/${ idtramite }` );
+    return this.request( 'GET', `tramite/${ idtramite }/detalles` );
   }
 }

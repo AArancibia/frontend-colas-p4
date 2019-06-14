@@ -12,6 +12,7 @@ import {TramiteService} from '@app/core/services/tramite/tramite.service';
 import {Administrado} from '@app/core/models/administrado.model';
 import {tick} from '@angular/core/testing';
 import {DetEstadoTicket} from '@app/core/models/detestadoticket.model';
+import {NzNotificationService} from 'ng-zorro-antd';
 
 @Component({
   selector: 'app-ticket',
@@ -44,7 +45,7 @@ export class TicketComponent implements OnInit, AfterViewInit {
     public ticketService: TicketService,
     public tematicaService: TematicaService,
     public tramiteService: TramiteService,
-    private notificationService: NotificacionService,
+    private notificationService: NzNotificationService,
     private snackBar: SnackbarService,
   ) {
 
@@ -60,12 +61,52 @@ export class TicketComponent implements OnInit, AfterViewInit {
     this.ticketDerivado();
   }
 
+  cambiarTematica( ) {
+    this.pasos = 0;
+    this.ticketService.actualizarTematicaOrTramite( this.selectTicket.id , {})
+      .pipe(
+        tap( () => this.selectTicket.idtematica = null ),
+      )
+      .subscribe();
+  }
+
+  guardarTramite() {
+    const ticket: Ticket = {
+      ...this.selectTicket,
+      idtramite: this.idtramite,
+    };
+    const { idtramite, idtematica, id } = ticket;
+    this.ticketService.actualizarTematicaOrTramite( id, {
+      idtramite,
+      idtematica,
+    })
+      .pipe(
+        tap(
+          ( ticketDB: Ticket ) => {
+            console.log( ticketDB );
+          }
+        ),
+      )
+      .subscribe();
+  }
+
   listarTickets() {
     this.ticketService.obtenerTicketsDia()
       .pipe(
         tap( ( tickets: Ticket[] ) => {
-          console.log( tickets );
           this.listTicket = tickets.length > 0 ? tickets.filter( ticket => ticket.idventanilla == this.ventanilla || !ticket.idventanilla ) : [];
+          const preferenciales: Ticket[] = this.listTicket.filter( ( ticket: Ticket ) => ticket.preferencial );
+          if ( preferenciales.length > 0 ) {
+            preferenciales.reverse();
+            preferenciales.map(
+              ( preferencial: Ticket, index, array ) => {
+                const ticketIndex = this.listTicket.findIndex( ticket => ticket.codigo == preferencial.codigo );
+                console.log( preferencial );
+                this.listTicket.splice( ticketIndex, 1 );
+                this.listTicket.splice( 1, 0, preferencial );
+              }
+            );
+          }
           if ( this.listTicket.length > 0 ) this.datosTicket( this.listTicket[ 0 ] );
         }),
       )
@@ -92,7 +133,19 @@ export class TicketComponent implements OnInit, AfterViewInit {
     switch ( estado ) {
       // LLAMANDO
       case 2: {
-        if ( this.validacionEstados.estadoticketId === 2 || this.validacionEstados.estadoticketId === 3 ) return;
+        if ( this.validacionEstados.estadoticketId === 2 || this.validacionEstados.estadoticketId === 3 ) {
+          this.snackBar.add({
+            msg: `Llamando ticket ${ this.selectTicket.id }`,
+            action: {
+              text: `Quitar`,
+              onClick: () => {},
+              color: 'blue',
+            },
+            timeout: 3000,
+            onRemove: () => { this.snackBar.clear(); }
+          });
+          return;
+        }
         this.ticketService.asignarVentanilla( this.selectTicket.id, this.ventanilla )
           .pipe(
             tap( () => this.activo = estado ),
@@ -215,14 +268,15 @@ export class TicketComponent implements OnInit, AfterViewInit {
     //console.log( ticket )
     if ( ticket ) {
       this.selectTicket = ticket;
+      this.idtramite = this.selectTicket.idtramite;
       this.mostrarInfoAdministrado = { ...this.selectTicket.administrado };
       this.listarTramitePorTematica( this.selectTicket.idtematica );
     } else {
       this.mostrarInfoAdministrado = {};
       this.selectTicket = null;
       this.validacionEstados = null;
+      this.idtramite = null ;
     }
-    console.log( this.selectTicket.detEstados );
     this.selectTicket.detEstados.sort( ( a, b ) => new Date( b.fecha ).getTime() -  new Date( a.fecha ).getTime() );
     this.validacionEstados = this.selectTicket.detEstados[ 0 ];
     if ( this.validacionEstados.estadoticketId === 3 ) {
@@ -236,9 +290,18 @@ export class TicketComponent implements OnInit, AfterViewInit {
   }
 
   mostrarDetalleTramite( idtramite ) {
+    if ( this.validacionEstados.estadoticketId === 2 || this.validacionEstados.estadoticketId === 1 ) {
+      this.notificationService.remove();
+      this.notificationService.create(
+        'warning', 'Notificación',
+        'Necesita primero atender el ticket',
+      );
+      return;
+    }
     this.tramiteService.obtenerDetallesDeTramite( idtramite )
       .pipe(
         tap( ( detalleTramite ) => {
+          console.log( detalleTramite );
           this.detallesTramite = detalleTramite;
           this.idtramite = idtramite;
           this.pasos = 2;

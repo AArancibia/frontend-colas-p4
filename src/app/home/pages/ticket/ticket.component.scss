@@ -80,6 +80,14 @@
   padding: 1rem;
   font-size: .9rem;
 
+  &__right {
+    height: 2rem;
+
+    span:nth-child( 2 ) > * {
+      padding: .5rem;
+    }
+  }
+
   &__requisitos {
 
     list-style: none;
@@ -116,6 +124,7 @@
   width: 100% !important;
 }
 .active {
+  color: white;
   color: white;
   background-color: mediumseagreen;
   margin-top: -1rem;

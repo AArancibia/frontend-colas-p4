@@ -91,9 +91,10 @@
         <div nz-col [nzXs]="1" [nzSm]="1" [nzMd]="1" [nzLg]="1" >
           <!-- && atender -->
           <!-- (click)="mostrarListaTematicas()" -->
+          {{ validacionEstados ? validacionEstados.estadoticketId : '' }}
           <i nz-icon nzType="edit"
-             *ngIf="derivar ; else iconoDisabled"
-             (click)="pasos = 0"
+             *ngIf="validacionEstados && validacionEstados.estadoticketId === 3; else iconoDisabled"
+             (click)="cambiarTematica()"
              nzTheme="outline"></i>
           <!--
           (nzVisibleChange)="change($event)"
@@ -216,7 +217,9 @@
     <div
       *ngIf="pasos === 2"
       class="detalle">
-      <nz-breadcrumb style="margin-bottom: .5rem;">
+      <div class="detalle__right">
+        <span style="float: left">
+        <nz-breadcrumb style="margin-bottom: .5rem;">
         <nz-breadcrumb-item>
           <a (click)="pasos = 0">/{{ getTematica( selectTicket.idtematica )  }}</a>
         </nz-breadcrumb-item>
@@ -224,6 +227,14 @@
           <a (click)="pasos = 1">{{ getTramite( idtramite )  }}</a>
         </nz-breadcrumb-item>
       </nz-breadcrumb>
+      </span>
+      <span style="float: right">
+        <i nz-icon nzType="mail" nzTheme="outline"></i>
+        <!--<button nz-button
+                nzSize="small"
+                nzType="default">Guardar Cambios</button>-->
+      </span>
+      </div>
       <div *ngFor="let detalleTramite of detallesTramite">
         <h5 class="detalle__titulo">Descripción del Procedimiento</h5>
         <p class="detalle__descripcion">
@@ -281,6 +292,11 @@
           <div>
             <i nz-icon type="printer"></i>
             <p>Imprimir Satisfacción</p>
+          </div>
+          <div>
+            <button nz-button
+                    (click)="guardarTramite()"
+                    nzType="default">Guardar Cambios</button>
           </div>
         </div>
       </div>

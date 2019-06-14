@@ -11,7 +11,6 @@ export class CardDirective implements OnInit{
 
   ngOnInit(): void {
     const card: any = this.el.nativeElement;
-    console.log( card );
     //const cardExtraRight: any = card.querySelector('.ant-card-extra');
     //cardExtraRight.style.width = '100%';
   }

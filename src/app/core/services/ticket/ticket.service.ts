@@ -44,7 +44,7 @@ export class TicketService extends Socket {
   }
 
   actualizarTematicaOrTramite( idticket, data ) {
-    return this.request( 'PUT', `ticket/${ idticket }/tematica`, data );
+    return this.request( 'PUT', `ticket/${ idticket }/tematica/tramite`, data );
   }
 
   obtenerTicketsDia() {
