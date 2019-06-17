@@ -65,7 +65,10 @@ export class TicketComponent implements OnInit, AfterViewInit {
     this.pasos = 0;
     this.ticketService.actualizarTematicaOrTramite( this.selectTicket.id , {})
       .pipe(
-        tap( () => this.selectTicket.idtematica = null ),
+        tap( () => {
+          this.selectTicket.idtematica = null;
+          this.idtramite = null;
+        }),
       )
       .subscribe();
   }
@@ -168,12 +171,14 @@ export class TicketComponent implements OnInit, AfterViewInit {
       }
       // ATENDIDO
       case 4: {
+        console.log( this.validacionEstados, this.selectTicket.idtematica );
         if ( this.validacionEstados.estadoticketId === 1 ) return;
         this.ticketService.guardarNuevoEstado( this.selectTicket.id, 4 )
           .pipe(
             tap( () => {
               this.activo = 0;
               this.derivar = false;
+              this.pasos = 0;
             }),
           )
           .subscribe();
@@ -213,6 +218,12 @@ export class TicketComponent implements OnInit, AfterViewInit {
             }
             this.listTicket = [ ...this.listTicket ];
             this.datosTicket( this.listTicket[ 0 ] );
+            if ( this.listTicket[ 0 ] && this.listTicket[ 0 ].idtematica === null ) {
+              this.notificationService.create(
+                'warning', 'Notificación',
+                'Ticket vino sin Tematica',
+              );
+            }
           }
         ),
       )
@@ -270,17 +281,25 @@ export class TicketComponent implements OnInit, AfterViewInit {
       this.selectTicket = ticket;
       this.idtramite = this.selectTicket.idtramite;
       this.mostrarInfoAdministrado = { ...this.selectTicket.administrado };
-      this.listarTramitePorTematica( this.selectTicket.idtematica );
+      if ( this.selectTicket.idtematica === null ) {
+        this.pasos = 0;
+      } else {
+        this.listarTramitePorTematica( this.selectTicket.idtematica );
+      }
+      this.selectTicket.detEstados.sort( ( a, b ) => new Date( b.fecha ).getTime() -  new Date( a.fecha ).getTime() );
+      this.validacionEstados = this.selectTicket.detEstados[ 0 ];
+      if ( this.validacionEstados.estadoticketId === 3 ) {
+        this.derivar = true;
+      }
+      if ( this.selectTicket.idtramite ) {
+        this.mostrarDetalleTramite( this.selectTicket.idtramite );
+        this.pasos = 2;
+      }
     } else {
       this.mostrarInfoAdministrado = {};
       this.selectTicket = null;
       this.validacionEstados = null;
       this.idtramite = null ;
-    }
-    this.selectTicket.detEstados.sort( ( a, b ) => new Date( b.fecha ).getTime() -  new Date( a.fecha ).getTime() );
-    this.validacionEstados = this.selectTicket.detEstados[ 0 ];
-    if ( this.validacionEstados.estadoticketId === 3 ) {
-      this.derivar = true;
     }
   }
 

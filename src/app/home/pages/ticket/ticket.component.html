@@ -80,7 +80,7 @@
               {{ mostrarInfoAdministrado.nombre }} {{ mostrarInfoAdministrado.apepat }} {{ mostrarInfoAdministrado.apemat }}
           </p>
           <p>{{ mostrarInfoAdministrado.nrodoc }}</p>
-          <p>{{ validacionEstados ? validacionEstados.estadoticketId : '' }}</p>
+          <p>{{ selectTicket ? selectTicket.idtematica : '' }}</p>
         </div>
         <div nz-col [nzXs]="5" [nzSm]="10" [nzMd]="7" [nzLg]="7"  class="card__tematica">
           <p>Temática</p>
@@ -125,7 +125,7 @@
                [hidden]="( pasos === 2 )"
                style="height: 90vh;" id="card__right" ><!-- [nzActions]="[actionSetting, actionEdit ]" -->
         <nz-table
-                  [hidden]="(pasos === 1 || pasos === 2 || idtematica <= 0 )"
+                  [hidden]="(pasos === 1 || pasos === 2 || idtematica <= 0 || !selectTicket )"
                   #tematicaTable
                    [nzData]="listTematica"
                   [nzSize]="'small'"><!-- [nzScroll]="{ y: '400px' }'" -->
@@ -221,7 +221,7 @@
         <span style="float: left">
         <nz-breadcrumb style="margin-bottom: .5rem;">
         <nz-breadcrumb-item>
-          <a (click)="pasos = 0">/{{ getTematica( selectTicket.idtematica )  }}</a>
+          <a (click)="cambiarTematica()">/{{ selectTicket ? getTematica( selectTicket.idtematica ) : '' }}</a>
         </nz-breadcrumb-item>
         <nz-breadcrumb-item>
           <a (click)="pasos = 1">{{ getTramite( idtramite )  }}</a>
