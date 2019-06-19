@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {WebsocketService} from './services/websocket/websocket.service';
 import {TicketService} from './services/ticket/ticket.service';
-import { VetanillaSocketService } from './services/ventanilla/vetanilla-socket.service';
+import { VentanillaService } from './services/ventanilla/ventanilla.service';
 import { TematicaService } from './services/tematica/tematica.service';
 import { TramiteService } from './services/tramite/tramite.service';
 
@@ -16,7 +16,7 @@ import { TramiteService } from './services/tramite/tramite.service';
   providers: [
     WebsocketService,
     TicketService,
-    VetanillaSocketService,
+    VentanillaService,
     TematicaService,
     TramiteService,
   ]

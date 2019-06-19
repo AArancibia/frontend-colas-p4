@@ -24,23 +24,10 @@
                   <span
                     *ngIf="selectTicket.codigo == item.codigo && validacionEstados && validacionEstados.estadoticketId === 3"
                     class="lista-items--estado lista-items--estado-atendiendo">
-                    <i style="float: left;margin: .2rem .2rem" nz-icon type="bell"></i>
+                    <i style="float: left;margin: .2rem .2rem" nz-icon type="sync"></i>
                     Atendiendo
                   </span>
                 </div>
-                <!--<nz-badge
-                  [nzStatus]="'warning'"
-                  [nzText]="'Llamando'"
-                  class="lista__items&#45;&#45;estado"
-                  *ngIf="selectTicket.codigo == item.codigo && validacionEstados && validacionEstados.estadoticketId === 2" >
-                  <i nz-icon type="bell"></i>
-                </nz-badge>
-                <nz-badge
-                  [nzStatus]="'success'"
-                  [nzText]="'Atendiendo'"
-                  *ngIf="selectTicket.codigo == item.codigo && validacionEstados && validacionEstados.estadoticketId === 3" >
-                  <i nz-icon type="sync"></i>
-                </nz-badge>-->
               </ng-template>
             </nz-list-item-meta>
           </nz-list-item>
@@ -98,6 +85,15 @@
                   <ng-template #suffixIconSearch>
                     <i nz-icon type="search"></i>
                   </ng-template>
+
+                  <!--<nz-select
+                    [(ngModel)]="ventanillaDerivar"
+                    style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
+                    <nz-option *ngFor="let ventanilla of listVentanillas"
+                               (ngModelChange)="estadosTickets( 5 )"
+                               [nzValue]="ventanilla.id" [nzLabel]="ventanilla.codigoVentanilla"></nz-option>
+                  </nz-select>-->
+
                 </ng-template>
               </div>
             </ng-template>
@@ -117,7 +113,7 @@
     </nz-card>
     <ng-template #cardHeaderLeft>
       <div nz-row>
-        <div nz-col [nzXs]="5" [nzSm]="4" [nzMd]="4" [nzLg]="5"  class="card__avatar">
+        <div nz-col [nzXs]="5" [nzSm]="4" [nzMd]="4" [nzLg]="4"  class="card__avatar">
           <nz-avatar [nzSize]="64" nzIcon="user"></nz-avatar>
         </div>
         <div nz-col [nzXs]="11" [nzSm]="9" [nzMd]="11" [nzLg]="11"  class="card__contribuyente">
@@ -126,9 +122,10 @@
               {{ mostrarInfoAdministrado.nombre }} {{ mostrarInfoAdministrado.apepat }} {{ mostrarInfoAdministrado.apemat }}
           </p>
           <p>{{ mostrarInfoAdministrado.nrodoc }}</p>
-          <p>{{ selectTicket ? selectTicket.idtematica : '' }}</p>
+          <!--<p>{{ selectTicket ? selectTicket.idtematica : '' }}</p>-->
+          <p>{{ ventanillaDerivar }}</p>
         </div>
-        <div nz-col [nzXs]="5" [nzSm]="10" [nzMd]="7" [nzLg]="7"  class="card__tematica">
+        <div nz-col [nzXs]="5" [nzSm]="10" [nzMd]="7" [nzLg]="8" class="card__tematica">
           <p>Temática</p>
           <p>{{ selectTicket ? getTematica( selectTicket.idtematica ) : '' }}</p>
           <p >{{ idtramite ? 'Trámite' : '' }}</p>
@@ -137,7 +134,7 @@
         <div nz-col [nzXs]="1" [nzSm]="1" [nzMd]="1" [nzLg]="1" >
           <!-- && atender -->
           <!-- (click)="mostrarListaTematicas()" -->
-          {{ validacionEstados ? validacionEstados.estadoticketId : '' }}
+          <!--{{ validacionEstados ? validacionEstados.estadoticketId : '' }}-->
           <i nz-icon nzType="edit"
              *ngIf="validacionEstados && validacionEstados.estadoticketId === 3; else iconoDisabled"
              (click)="cambiarTematica()"
@@ -278,6 +275,7 @@
         <button nz-button
                 (click)="guardarTramite()"
                 nzSize="small"
+                [disabled]="selectTicket.idtramite == idtramite"
                 nzType="default">Asignar Trámite</button>
         <i nz-icon nzType="mail" nzTheme="outline"></i>
       </span>

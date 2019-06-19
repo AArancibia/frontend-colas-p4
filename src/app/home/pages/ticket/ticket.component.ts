@@ -1,18 +1,18 @@
 import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
 import {WebsocketService} from '@app/core/services/websocket/websocket.service';
 import {TicketService} from '@app/core/services/ticket/ticket.service';
-import {NotificacionService} from '@app/shared/components/notification/notificacion.service';
 import {Ticket} from '@app/core/models/ticket.model';
-import {startWith, tap, withLatestFrom} from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import {Tramite} from '@app/core/models/tramite.model';
 import {Tematica} from '@app/core/models/tematica.model';
 import {TematicaService} from '@app/core/services/tematica/tematica.service';
 import {SnackbarService} from 'ngx-snackbar';
 import {TramiteService} from '@app/core/services/tramite/tramite.service';
 import {Administrado} from '@app/core/models/administrado.model';
-import {tick} from '@angular/core/testing';
 import {DetEstadoTicket} from '@app/core/models/detestadoticket.model';
 import {NzNotificationService} from 'ng-zorro-antd';
+import {VentanillaService} from '@app/core/services/ventanilla/ventanilla.service';
+import {Ventanilla} from '@app/core/models/ventanilla.model';
 
 @Component({
   selector: 'app-ticket',
@@ -26,18 +26,16 @@ export class TicketComponent implements OnInit, AfterViewInit {
   mostrarInfoAdministrado: Administrado = new Administrado();
   selectTicket: Ticket;
   validacionEstados: DetEstadoTicket;
+  listVentanillas: Ventanilla[] = [];
   idtematica: number;
   idtramite: number;
   ventanilla: any;
   derivar: boolean = false;
-  estado: number = -1;
   ventanillaDerivar: any;
   visible: boolean;
-  visibleTematica: boolean;
   inputTramites: string;
   inputTematicas: string;
   pasos: number = 0;
-  mostrarTematica: string;
   detallesTramite: any;
   activo: number = 0;
   constructor(
@@ -47,11 +45,13 @@ export class TicketComponent implements OnInit, AfterViewInit {
     public tramiteService: TramiteService,
     private notificationService: NzNotificationService,
     private snackBar: SnackbarService,
+    private ventanillaService: VentanillaService,
   ) {
 
   }
 
   ngOnInit() {
+    this.listarVentanillas();
     this.listarTematicas();
     this.ventanilla = Number( prompt('Ventanilla' ) );
     this.listarTickets();
@@ -86,7 +86,15 @@ export class TicketComponent implements OnInit, AfterViewInit {
       .pipe(
         tap(
           ( ticketDB: Ticket ) => {
-            console.log( ticketDB );
+            this.notificationService.info(
+              'Tramite Asignado', `Tramite ${ this.getTramite( idtramite ) } asignado a ticket ${ this.selectTicket.codigo }`,
+              {
+                nzStyle: {
+                  //marginTop: '2.5rem',
+                  //marginRight: '5rem',
+                },
+              }
+            );
             this.selectTicket.idtramite = this.idtramite;
           }
         ),
@@ -141,11 +149,14 @@ export class TicketComponent implements OnInit, AfterViewInit {
           return;
         } else if ( this.validacionEstados.estadoticketId === 1 || this.validacionEstados.estadoticketId === 2 ) {
           this.snackBar.add({
-            msg: `Llamando ticket ${ this.selectTicket.id }`,
+            msg: `Llamando ticket ${ this.selectTicket.codigo }`,
+            background: '#000000',
+            color: '#ffffff',
+            customClass: '.snack-message',
             action: {
               text: `Quitar`,
               onClick: () => {},
-              color: 'blue',
+              color: '#108ee9',
             },
             timeout: 3000,
             onRemove: () => { this.snackBar.clear(); }
@@ -174,8 +185,11 @@ export class TicketComponent implements OnInit, AfterViewInit {
       // ATENDIDO
       case 4: {
         if ( this.selectTicket.idtramite !== this.idtramite ) {
-          this.notificationService.info(
-            'Notificación', 'No ha guardado los ultimos cambios en Asignar Tramite'
+          this.notificationService.error(
+            'Notificación', 'No ha guardado los ultimos cambios en Asignar Tramite',
+            {
+              nzPauseOnHover: true,
+            }
           );
           return;
         }
@@ -217,6 +231,12 @@ export class TicketComponent implements OnInit, AfterViewInit {
             const ventanillaAntigua = derivado.ventanillaAntigua;
             if ( ticket.idventanilla == this.ventanilla ) {
               this.listTicket.splice( 1 , 0, ticket );
+              this.notificationService.config({
+                nzPlacement: 'topLeft',
+              });
+              this.notificationService.info(
+                `Ticket Derivado - Correlativo ${ ticket.codigo }`, `Nuevo ticket derivado en tu lista de tickets`
+              );
             }
             if ( this.ventanilla == ventanillaAntigua ) {
               const ticketaSacar = this.listTicket.findIndex( ( item: Ticket ) => item.codigo === ticket.codigo );
@@ -358,6 +378,18 @@ export class TicketComponent implements OnInit, AfterViewInit {
           this.selectTicket.idtematica = idtematica;
           this.pasos = 1;
         }),
+      )
+      .subscribe();
+  }
+
+  listarVentanillas() {
+    this.ventanillaService.obtenerVentanillas()
+      .pipe(
+        tap(
+          ( ventanillas: Ventanilla[] ) => {
+            this.listVentanillas = ventanillas.filter( ( ventanilla: Ventanilla ) => ventanilla.id !== this.ventanilla );
+          }
+        ),
       )
       .subscribe();
   }
