@@ -87,6 +87,7 @@ export class TicketComponent implements OnInit, AfterViewInit {
         tap(
           ( ticketDB: Ticket ) => {
             console.log( ticketDB );
+            this.selectTicket.idtramite = this.idtramite;
           }
         ),
       )
@@ -136,7 +137,9 @@ export class TicketComponent implements OnInit, AfterViewInit {
     switch ( estado ) {
       // LLAMANDO
       case 2: {
-        if ( this.validacionEstados.estadoticketId === 2 || this.validacionEstados.estadoticketId === 3 ) {
+        if ( this.validacionEstados.estadoticketId === 3 ) {
+          return;
+        } else if ( this.validacionEstados.estadoticketId === 1 || this.validacionEstados.estadoticketId === 2 ) {
           this.snackBar.add({
             msg: `Llamando ticket ${ this.selectTicket.id }`,
             action: {
@@ -147,7 +150,6 @@ export class TicketComponent implements OnInit, AfterViewInit {
             timeout: 3000,
             onRemove: () => { this.snackBar.clear(); }
           });
-          return;
         }
         this.ticketService.asignarVentanilla( this.selectTicket.id, this.ventanilla )
           .pipe(
@@ -171,7 +173,12 @@ export class TicketComponent implements OnInit, AfterViewInit {
       }
       // ATENDIDO
       case 4: {
-        console.log( this.validacionEstados, this.selectTicket.idtematica );
+        if ( this.selectTicket.idtramite !== this.idtramite ) {
+          this.notificationService.info(
+            'Notificación', 'No ha guardado los ultimos cambios en Asignar Tramite'
+          );
+          return;
+        }
         if ( this.validacionEstados.estadoticketId === 1 ) return;
         this.ticketService.guardarNuevoEstado( this.selectTicket.id, 4 )
           .pipe(
@@ -215,6 +222,7 @@ export class TicketComponent implements OnInit, AfterViewInit {
               const ticketaSacar = this.listTicket.findIndex( ( item: Ticket ) => item.codigo === ticket.codigo );
               this.listTicket.splice( ticketaSacar, 1 );
               this.derivar = false;
+              this.pasos = 0;
             }
             this.listTicket = [ ...this.listTicket ];
             this.datosTicket( this.listTicket[ 0 ] );
@@ -291,9 +299,9 @@ export class TicketComponent implements OnInit, AfterViewInit {
       if ( this.validacionEstados.estadoticketId === 3 ) {
         this.derivar = true;
       }
-      if ( this.selectTicket.idtramite ) {
+      if ( this.selectTicket.idtramite && this.validacionEstados.estadoticketId === 3 ) {
         this.mostrarDetalleTramite( this.selectTicket.idtramite );
-        this.pasos = 2;
+        //this.pasos = 2;
       }
     } else {
       this.mostrarInfoAdministrado = {};
@@ -309,14 +317,14 @@ export class TicketComponent implements OnInit, AfterViewInit {
   }
 
   mostrarDetalleTramite( idtramite ) {
-    if ( this.validacionEstados.estadoticketId === 2 || this.validacionEstados.estadoticketId === 1 ) {
+    /*if ( this.validacionEstados.estadoticketId === 2 || this.validacionEstados.estadoticketId === 1 ) {
       this.notificationService.remove();
       this.notificationService.create(
         'warning', 'Notificación',
         'Necesita primero atender el ticket',
       );
       return;
-    }
+    }*/
     this.tramiteService.obtenerDetallesDeTramite( idtramite )
       .pipe(
         tap( ( detalleTramite ) => {

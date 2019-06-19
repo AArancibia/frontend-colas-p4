@@ -83,8 +83,10 @@
   &__right {
     height: 2rem;
 
-    span:nth-child( 2 ) > * {
-      padding: .5rem;
+    span:nth-child( 2 ) {
+      i {
+        padding: .5rem;
+      }
     }
   }
 
@@ -118,6 +120,35 @@
   &:first-child {
     font-weight: bold;
   }
+
+  &--text {
+    display: flex; flex-direction: row;justify-content: center;align-content: center;
+  }
+
+  &--estado {
+    border-radius: .3rem !important;
+    padding: .3rem .3rem 0rem .3rem !important;;
+
+    &:hover {
+      cursor: pointer;
+    }
+
+    &-llamando {
+      border: 1px solid #faad14;
+      color: #faad14;
+    }
+
+    &-atendiendo {
+      border: 1px solid #87d068;
+      color: #87d068;
+    }
+  }
+}
+
+[nz-badge]:host {
+  background-color: #87d068 !important;
+  border-radius: .5rem !important;
+  padding: .1rem !important;
 }
 
 .ant-card-extra .ng-star-inserted {

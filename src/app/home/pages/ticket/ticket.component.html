@@ -10,31 +10,72 @@
         [nzRenderItem]="item">
         <ng-template #item let-item>
           <nz-list-item appCardticket
-                        class="lista-items"
-                        [id]="item[0]"
-                        [nzContent]="item.codigo"></nz-list-item>
+                        [id]="item[0]">
+            <nz-list-item-meta [nzTitle]="MostrarEstado">
+              <ng-template #MostrarEstado>
+                <div class="lista-items--text">
+                  <h3 style="margin: .3rem">{{ item.codigo }}</h3>
+                  <span
+                    *ngIf="selectTicket.codigo == item.codigo && validacionEstados && validacionEstados.estadoticketId === 2"
+                    class="lista-items--estado lista-items--estado-llamando">
+                    <i style="float: left;margin: .2rem .2rem" nz-icon type="bell"></i>
+                    Llamando
+                  </span>
+                  <span
+                    *ngIf="selectTicket.codigo == item.codigo && validacionEstados && validacionEstados.estadoticketId === 3"
+                    class="lista-items--estado lista-items--estado-atendiendo">
+                    <i style="float: left;margin: .2rem .2rem" nz-icon type="bell"></i>
+                    Atendiendo
+                  </span>
+                </div>
+                <!--<nz-badge
+                  [nzStatus]="'warning'"
+                  [nzText]="'Llamando'"
+                  class="lista__items&#45;&#45;estado"
+                  *ngIf="selectTicket.codigo == item.codigo && validacionEstados && validacionEstados.estadoticketId === 2" >
+                  <i nz-icon type="bell"></i>
+                </nz-badge>
+                <nz-badge
+                  [nzStatus]="'success'"
+                  [nzText]="'Atendiendo'"
+                  *ngIf="selectTicket.codigo == item.codigo && validacionEstados && validacionEstados.estadoticketId === 3" >
+                  <i nz-icon type="sync"></i>
+                </nz-badge>-->
+              </ng-template>
+            </nz-list-item-meta>
+          </nz-list-item>
         </ng-template>
         <ng-template #footer >
           <div class="card__footer text-center" >
-            <div>
+            <div class="card__footer__button">
               <i nz-icon nzType="minus-circle" nzTheme="outline"></i>
               <p>Ocupado</p>
             </div>
             <!--[ngClass]="{ 'active': activo === 2 }"-->
             <div
-              (click)="estadosTickets( 2 )"
-              class="card__footer__button">
+              (click)="selectTicket && estadosTickets( 2 )"
+              class="card__footer__button"
+              [ngStyle]="{
+              cursor: !selectTicket || validacionEstados && validacionEstados.estadoticketId === 3 ? 'not-allowed' : '',
+              color: !selectTicket || validacionEstados && validacionEstados.estadoticketId === 3 ? '#bfbfbf' : ''
+              }"
+            >
               <i nz-icon nzType="bell" nzTheme="outline"></i>
               <p>Llamar </p>
             </div>
             <div
-              (click)="estadosTickets( 3 )"
-              [ngClass]="{ 'active': activo === 3 }" *ngIf="!derivar; else derivarTemplate"> <!-- && atender  -->
+              (click)="selectTicket && estadosTickets( 3 )"
+              class="card__footer__button"
+              [ngStyle]="{
+              cursor: !selectTicket || validacionEstados && validacionEstados.estadoticketId === 1 ? 'not-allowed' : '',
+              color: !selectTicket || validacionEstados && validacionEstados.estadoticketId === 1 ? '#bfbfbf' : ''
+              }"
+              *ngIf="!derivar; else derivarTemplate"> <!-- && atender  -->
               <i nz-icon type="upload"></i>
               <p>Atender </p>
             </div>
             <ng-template #derivarTemplate>
-              <div>
+              <div class="card__footer__button">
                 <i nz-icon type="upload"></i>
                 <p
                   nz-popover
@@ -61,7 +102,12 @@
               </div>
             </ng-template>
             <div
-              (click)="estadosTickets( 4 )">
+              class="card__footer__button"
+              [ngStyle]="{
+              cursor: !selectTicket || validacionEstados && validacionEstados.estadoticketId < 2 ? 'not-allowed' : '',
+              color: !selectTicket || validacionEstados && validacionEstados.estadoticketId < 2 ? '#bfbfbf' : ''
+              }"
+              (click)="selectTicket && estadosTickets( 4 )">
               <i nz-icon nzType="caret-right" nzTheme="fill"></i>
               <p>Siguiente </p>
             </div>
@@ -149,7 +195,7 @@
         </nz-table>
 
         <nz-table
-          [hidden]="( pasos === 0 )"
+          [hidden]="( pasos === 0 || !validacionEstados || validacionEstados.estadoticketId !== 3 )"
           #basicTable [nzData]="listaTramites" [nzSize]="'small'"><!-- [nzScroll]="{ y: '400px' }'" -->
           <thead>
           <tr>
@@ -219,20 +265,21 @@
       class="detalle">
       <div class="detalle__right">
         <span style="float: left">
-        <nz-breadcrumb style="margin-bottom: .5rem;">
-        <nz-breadcrumb-item>
-          <a (click)="cambiarTematica()">/{{ selectTicket ? getTematica( selectTicket.idtematica ) : '' }}</a>
-        </nz-breadcrumb-item>
-        <nz-breadcrumb-item>
-          <a (click)="pasos = 1">{{ getTramite( idtramite )  }}</a>
-        </nz-breadcrumb-item>
-      </nz-breadcrumb>
+        <nz-breadcrumb>
+          <nz-breadcrumb-item>
+            <a (click)="cambiarTematica()">/{{ selectTicket ? getTematica( selectTicket.idtematica ) : '' }}</a>
+          </nz-breadcrumb-item>
+          <nz-breadcrumb-item>
+            <a (click)="pasos = 1">{{ getTramite( idtramite )  }}</a>
+          </nz-breadcrumb-item>
+        </nz-breadcrumb>
       </span>
       <span style="float: right">
-        <i nz-icon nzType="mail" nzTheme="outline"></i>
-        <!--<button nz-button
+        <button nz-button
+                (click)="guardarTramite()"
                 nzSize="small"
-                nzType="default">Guardar Cambios</button>-->
+                nzType="default">Asignar Trámite</button>
+        <i nz-icon nzType="mail" nzTheme="outline"></i>
       </span>
       </div>
       <div *ngFor="let detalleTramite of detallesTramite">
@@ -292,11 +339,6 @@
           <div>
             <i nz-icon type="printer"></i>
             <p>Imprimir Satisfacción</p>
-          </div>
-          <div>
-            <button nz-button
-                    (click)="guardarTramite()"
-                    nzType="default">Guardar Cambios</button>
           </div>
         </div>
       </div>
