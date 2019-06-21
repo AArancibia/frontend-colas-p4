@@ -38,19 +38,33 @@
               cursor: estadoVentanilla !== 7 ? 'not-allowed' : '',
               color: estadoVentanilla !== 7 ? '#bfbfbf' : ''
               }"-->
-            <div
-              (click)="bloquearVentanilla()"
-              class="card__footer__button">
-              <i nz-icon nzType="minus-circle" nzTheme="outline"></i>
-              <p>Ocupado</p>
+            <div *ngIf="estadoVentanilla !== 7"
+                 [ngStyle]="{
+                cursor: validacionEstados && validacionEstados.estadoticketId > 1 ? 'not-allowed' : '',
+                color: validacionEstados && validacionEstados.estadoticketId > 1 ? '#bfbfbf' : ''
+                }"
+                (click)="bloquearActivarVentanilla( 7 )"
+                class="card__footer__button">
+                <i nz-icon nzType="minus-circle" nzTheme="outline"></i>
+                <p>Ocupado</p>
             </div>
+            <div *ngIf="estadoVentanilla === 7"
+                 (click)="bloquearActivarVentanilla( 8 )"
+                 [ngStyle]="{
+              cursor: estadoVentanilla !== 7 ? 'not-allowed' : '',
+              color: estadoVentanilla !== 7 ? '#bfbfbf' : ''
+              }" class="card__footer__button">
+              <i nz-icon nzType="minus-circle" nzTheme="outline"></i>
+              <p>Activar</p>
+            </div>
+
             <!--[ngClass]="{ 'active': activo === 2 }"-->
             <div
               (click)="selectTicket && estadosTickets( 2 )"
               class="card__footer__button"
               [ngStyle]="{
-              cursor: ( !selectTicket || validacionEstados && validacionEstados.estadoticketId === 3 ) ? 'not-allowed' : '',
-              color: !selectTicket || validacionEstados && validacionEstados.estadoticketId === 3 ? '#bfbfbf' : ''
+              cursor: estadoVentanilla === 7 ||   ( !selectTicket || validacionEstados && validacionEstados.estadoticketId === 3 ) ? 'not-allowed' : '',
+              color: estadoVentanilla === 7 ||  ( !selectTicket || validacionEstados && validacionEstados.estadoticketId === 3 ) ? '#bfbfbf' : ''
               }"
             >
               <!-- estadoVentanilla === 7 ||  -->
@@ -61,8 +75,8 @@
               (click)="selectTicket && estadosTickets( 3 )"
               class="card__footer__button"
               [ngStyle]="{
-              cursor:  ( !selectTicket || validacionEstados && validacionEstados.estadoticketId === 1 ) ?  'not-allowed' : '',
-              color: ( !selectTicket || validacionEstados && validacionEstados.estadoticketId === 1 ) ?  '#bfbfbf' : ''
+              cursor: estadoVentanilla === 7 || ( !selectTicket || validacionEstados && validacionEstados.estadoticketId === 1 ) ?  'not-allowed' : '',
+              color: estadoVentanilla === 7 || ( !selectTicket || validacionEstados && validacionEstados.estadoticketId === 1 ) ?  '#bfbfbf' : ''
               }"
               *ngIf="!derivar; else derivarTemplate"> <!-- && atender  -->
               <i nz-icon type="upload"></i>
@@ -107,8 +121,8 @@
             <div
               class="card__footer__button"
               [ngStyle]="{
-              cursor: ( !selectTicket || validacionEstados && validacionEstados.estadoticketId < 2 ) ? 'not-allowed' : '',
-              color: ( !selectTicket || validacionEstados && validacionEstados.estadoticketId < 2 ) ? '#bfbfbf' : ''
+              cursor: estadoVentanilla === 7 || ( !selectTicket || validacionEstados && validacionEstados.estadoticketId < 2 ) ? 'not-allowed' : '',
+              color: estadoVentanilla === 7 || ( !selectTicket || validacionEstados && validacionEstados.estadoticketId < 2 ) ? '#bfbfbf' : ''
               }"
               (click)="selectTicket && estadosTickets( 4 )">
               <i nz-icon nzType="caret-right" nzTheme="fill"></i>

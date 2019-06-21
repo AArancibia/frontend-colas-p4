@@ -423,14 +423,15 @@ export class TicketComponent implements OnInit, AfterViewInit {
       .subscribe();
   }
 
-  bloquearVentanilla() {
-    this.ventanillaService.bloquearVentanilla(
-      this.ventanilla
+  bloquearActivarVentanilla( idestado ) {
+    if ( this.validacionEstados && this.validacionEstados.estadoticketId > 1 ) return;
+    this.ventanillaService.bloquearActivarVentanilla(
+      this.ventanilla, idestado
     )
       .pipe(
         tap(
-          () => {
-            this.estadoVentanilla = 7;
+          ( resp: any ) => {
+            this.estadoVentanilla = +resp.tbEstadoventanillaId;
           }
         ),
       )

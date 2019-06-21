@@ -31,8 +31,8 @@ export class VentanillaService extends Socket {
     return this.request( 'GET', 'ventanilla' );
   }
 
-  bloquearVentanilla( idventanilla ) {
-    return this.request( 'POST', `ventanilla/${ idventanilla }/estado/${ 7 }`);
+  bloquearActivarVentanilla( idventanilla, idestado ) {
+    return this.request( 'POST', `ventanilla/${ idventanilla }/estado/${ idestado }`);
   }
 
   ultimoEstado(
