@@ -38,6 +38,7 @@ export class TicketComponent implements OnInit, AfterViewInit {
   pasos: number = 0;
   detallesTramite: any;
   activo: number = 0;
+  estadoVentanilla: number = 0;
   constructor(
     private wsSocket: WebsocketService,
     public ticketService: TicketService,
@@ -59,6 +60,7 @@ export class TicketComponent implements OnInit, AfterViewInit {
     this.ventanillaAsignadaAlTicket();
     this.nuevoEstadoTicket();
     this.ticketDerivado();
+    this.ultimoEstadoVentanilla();
   }
 
   cambiarTematica( ) {
@@ -67,6 +69,7 @@ export class TicketComponent implements OnInit, AfterViewInit {
       .pipe(
         tap( () => {
           this.selectTicket.idtematica = null;
+          this.selectTicket.idtramite = null;
           this.idtramite = null;
         }),
       )
@@ -76,7 +79,7 @@ export class TicketComponent implements OnInit, AfterViewInit {
   guardarTramite() {
     const ticket: Ticket = {
       ...this.selectTicket,
-      idtramite: this.idtramite,
+      //idtramite: this.idtramite,
     };
     const { idtramite, idtematica, id } = ticket;
     this.ticketService.actualizarTematicaOrTramite( id, {
@@ -95,7 +98,7 @@ export class TicketComponent implements OnInit, AfterViewInit {
                 },
               }
             );
-            this.selectTicket.idtramite = this.idtramite;
+            this.idtramite = this.selectTicket.idtramite;
           }
         ),
       )
@@ -119,7 +122,10 @@ export class TicketComponent implements OnInit, AfterViewInit {
               }
             );
           }
-          if ( this.listTicket.length > 0 ) this.datosTicket( this.listTicket[ 0 ] );
+          if ( this.listTicket.length > 0 ) {
+            this.datosTicket( this.listTicket[ 0 ] );
+            this.masDetalle();
+          }
         }),
       )
       .subscribe();
@@ -135,7 +141,10 @@ export class TicketComponent implements OnInit, AfterViewInit {
             this.listTicket = [ ...this.listTicket, ticket];
           }
           this.listTicket = [ ...this.listTicket ];
-          if ( this.listTicket.length <= 1 ) this.datosTicket( this.listTicket[ 0 ] );
+          if ( this.listTicket.length <= 1 ) {
+            this.datosTicket( this.listTicket[ 0 ] );
+            this.masDetalle();
+          }
         }),
       )
       .subscribe();
@@ -275,6 +284,7 @@ export class TicketComponent implements OnInit, AfterViewInit {
           }
           this.listTicket = [ ...this.listTicket ];
           this.datosTicket( this.listTicket[ 0 ] );
+          if ( this.listTicket.length > 0 && ticket.idventanilla === this.ventanilla ) this.masDetalle();
         }),
       )
       .subscribe();
@@ -297,6 +307,9 @@ export class TicketComponent implements OnInit, AfterViewInit {
             }
             this.listTicket = [ ...this.listTicket ];
             this.datosTicket( this.listTicket[ 0 ] );
+            if ( ticket.idventanilla === this.ventanilla ) {
+              this.masDetalle();
+            }
           }
         ),
       )
@@ -307,27 +320,42 @@ export class TicketComponent implements OnInit, AfterViewInit {
     //console.log( ticket )
     if ( ticket ) {
       this.selectTicket = ticket;
-      this.idtramite = this.selectTicket.idtramite;
       this.mostrarInfoAdministrado = { ...this.selectTicket.administrado };
+      /*this.idtramite = this.selectTicket.idtramite;
       if ( this.selectTicket.idtematica === null ) {
         this.pasos = 0;
       } else {
+        console.log( 'haciendo listar tramite' );
         this.listarTramitePorTematica( this.selectTicket.idtematica );
-      }
+      }*/
       this.selectTicket.detEstados.sort( ( a, b ) => new Date( b.fecha ).getTime() -  new Date( a.fecha ).getTime() );
       this.validacionEstados = this.selectTicket.detEstados[ 0 ];
       if ( this.validacionEstados.estadoticketId === 3 ) {
         this.derivar = true;
       }
-      if ( this.selectTicket.idtramite && this.validacionEstados.estadoticketId === 3 ) {
+      /*if ( this.selectTicket.idtramite && this.validacionEstados.estadoticketId === 3 ) {
         this.mostrarDetalleTramite( this.selectTicket.idtramite );
         //this.pasos = 2;
-      }
+      }*/
     } else {
       this.mostrarInfoAdministrado = {};
       this.selectTicket = null;
       this.validacionEstados = null;
       this.idtramite = null ;
+    }
+  }
+
+  masDetalle() {
+    this.idtramite = this.selectTicket.idtramite;
+    if ( this.selectTicket.idtematica === null ) {
+      this.pasos = 0;
+    } else {
+      console.log( 'haciendo listar tramite' );
+      this.listarTramitePorTematica( this.selectTicket.idtematica );
+    }
+    if ( this.selectTicket.idtramite && this.validacionEstados.estadoticketId === 3 ) {
+      this.mostrarDetalleTramite( this.selectTicket.idtramite );
+      //this.pasos = 2;
     }
   }
 
@@ -350,7 +378,8 @@ export class TicketComponent implements OnInit, AfterViewInit {
         tap( ( detalleTramite ) => {
           console.log( detalleTramite );
           this.detallesTramite = detalleTramite;
-          this.idtramite = idtramite;
+          //this.idtramite = idtramite;
+          this.selectTicket.idtramite = idtramite;
           this.pasos = 2;
         }),
       )
@@ -394,6 +423,20 @@ export class TicketComponent implements OnInit, AfterViewInit {
       .subscribe();
   }
 
+  bloquearVentanilla() {
+    this.ventanillaService.bloquearVentanilla(
+      this.ventanilla
+    )
+      .pipe(
+        tap(
+          () => {
+            this.estadoVentanilla = 7;
+          }
+        ),
+      )
+      .subscribe();
+  }
+
   ngAfterViewInit(): void {
     const card: any = document.getElementById('card__ticket');
     const cardExtra: any = card.querySelector('.ant-card-extra');
@@ -416,6 +459,18 @@ export class TicketComponent implements OnInit, AfterViewInit {
     const cardRight: any = document.getElementById('card__right');
     const cardExtraRight: any = cardRight.querySelector('.ant-card-extra');
     cardExtraRight.style.width = '100%';
+  }
+
+  ultimoEstadoVentanilla() {
+    this.ventanillaService.ultimoEstado( this.ventanilla )
+      .pipe(
+        tap(
+          ( estadoVentanilla: any ) => {
+            this.estadoVentanilla = estadoVentanilla[ 0 ].tbEstadoventanillaId;
+          }
+        ),
+      )
+      .subscribe();
   }
 
   clickMe(): void {

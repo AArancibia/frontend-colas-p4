@@ -34,7 +34,13 @@
         </ng-template>
         <ng-template #footer >
           <div class="card__footer text-center" >
-            <div class="card__footer__button">
+            <!--[ngStyle]="{
+              cursor: estadoVentanilla !== 7 ? 'not-allowed' : '',
+              color: estadoVentanilla !== 7 ? '#bfbfbf' : ''
+              }"-->
+            <div
+              (click)="bloquearVentanilla()"
+              class="card__footer__button">
               <i nz-icon nzType="minus-circle" nzTheme="outline"></i>
               <p>Ocupado</p>
             </div>
@@ -43,10 +49,11 @@
               (click)="selectTicket && estadosTickets( 2 )"
               class="card__footer__button"
               [ngStyle]="{
-              cursor: !selectTicket || validacionEstados && validacionEstados.estadoticketId === 3 ? 'not-allowed' : '',
+              cursor: ( !selectTicket || validacionEstados && validacionEstados.estadoticketId === 3 ) ? 'not-allowed' : '',
               color: !selectTicket || validacionEstados && validacionEstados.estadoticketId === 3 ? '#bfbfbf' : ''
               }"
             >
+              <!-- estadoVentanilla === 7 ||  -->
               <i nz-icon nzType="bell" nzTheme="outline"></i>
               <p>Llamar </p>
             </div>
@@ -54,8 +61,8 @@
               (click)="selectTicket && estadosTickets( 3 )"
               class="card__footer__button"
               [ngStyle]="{
-              cursor: !selectTicket || validacionEstados && validacionEstados.estadoticketId === 1 ? 'not-allowed' : '',
-              color: !selectTicket || validacionEstados && validacionEstados.estadoticketId === 1 ? '#bfbfbf' : ''
+              cursor:  ( !selectTicket || validacionEstados && validacionEstados.estadoticketId === 1 ) ?  'not-allowed' : '',
+              color: ( !selectTicket || validacionEstados && validacionEstados.estadoticketId === 1 ) ?  '#bfbfbf' : ''
               }"
               *ngIf="!derivar; else derivarTemplate"> <!-- && atender  -->
               <i nz-icon type="upload"></i>
@@ -100,8 +107,8 @@
             <div
               class="card__footer__button"
               [ngStyle]="{
-              cursor: !selectTicket || validacionEstados && validacionEstados.estadoticketId < 2 ? 'not-allowed' : '',
-              color: !selectTicket || validacionEstados && validacionEstados.estadoticketId < 2 ? '#bfbfbf' : ''
+              cursor: ( !selectTicket || validacionEstados && validacionEstados.estadoticketId < 2 ) ? 'not-allowed' : '',
+              color: ( !selectTicket || validacionEstados && validacionEstados.estadoticketId < 2 ) ? '#bfbfbf' : ''
               }"
               (click)="selectTicket && estadosTickets( 4 )">
               <i nz-icon nzType="caret-right" nzTheme="fill"></i>
@@ -123,18 +130,18 @@
           </p>
           <p>{{ mostrarInfoAdministrado.nrodoc }}</p>
           <!--<p>{{ selectTicket ? selectTicket.idtematica : '' }}</p>-->
-          <p>{{ ventanillaDerivar }}</p>
+          <p>{{ 'pasos: ' + pasos }} || {{ 'idtramite: ' + idtramite }}</p>
         </div>
         <div nz-col [nzXs]="5" [nzSm]="10" [nzMd]="7" [nzLg]="8" class="card__tematica">
           <p>Temática</p>
           <p>{{ selectTicket ? getTematica( selectTicket.idtematica ) : '' }}</p>
-          <p >{{ idtramite ? 'Trámite' : '' }}</p>
-          <p>{{ idtramite ? getTramite( idtramite ) : '' }}</p>
+          <p >{{ selectTicket && selectTicket.idtramite ? 'Trámite' : '' }}</p>
+          <p>{{ selectTicket ? getTramite( selectTicket.idtramite ) : '' }}</p>
         </div>
         <div nz-col [nzXs]="1" [nzSm]="1" [nzMd]="1" [nzLg]="1" >
           <!-- && atender -->
           <!-- (click)="mostrarListaTematicas()" -->
-          <!--{{ validacionEstados ? validacionEstados.estadoticketId : '' }}-->
+          {{ validacionEstados && validacionEstados.estadoticketId }}
           <i nz-icon nzType="edit"
              *ngIf="validacionEstados && validacionEstados.estadoticketId === 3; else iconoDisabled"
              (click)="cambiarTematica()"
@@ -168,7 +175,7 @@
                [hidden]="( pasos === 2 )"
                style="height: 90vh;" id="card__right" ><!-- [nzActions]="[actionSetting, actionEdit ]" -->
         <nz-table
-                  [hidden]="(pasos === 1 || pasos === 2 || idtematica <= 0 || !selectTicket )"
+                  [hidden]="(pasos === 1 || !validacionEstados || validacionEstados.estadoticketId < 3 ||  pasos === 2 || idtematica <= 0 || !selectTicket )"
                   #tematicaTable
                    [nzData]="listTematica"
                   [nzSize]="'small'"><!-- [nzScroll]="{ y: '400px' }'" -->
@@ -267,7 +274,7 @@
             <a (click)="cambiarTematica()">/{{ selectTicket ? getTematica( selectTicket.idtematica ) : '' }}</a>
           </nz-breadcrumb-item>
           <nz-breadcrumb-item>
-            <a (click)="pasos = 1">{{ getTramite( idtramite )  }}</a>
+            <a (click)="pasos = 1">{{ selectTicket ? getTramite( selectTicket.idtramite ) : '' }}</a>
           </nz-breadcrumb-item>
         </nz-breadcrumb>
       </span>
@@ -275,7 +282,7 @@
         <button nz-button
                 (click)="guardarTramite()"
                 nzSize="small"
-                [disabled]="selectTicket.idtramite == idtramite"
+                [disabled]="!selectTicket || selectTicket.idtramite == idtramite"
                 nzType="default">Asignar Trámite</button>
         <i nz-icon nzType="mail" nzTheme="outline"></i>
       </span>
