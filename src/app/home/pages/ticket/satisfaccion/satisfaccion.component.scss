@@ -1,0 +1,76 @@
+.caritas {
+  position: relative;
+  height: 90vh;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: center;
+
+  &--button {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+  }
+  i {
+    font-size: 15rem;
+  }
+}
+
+.satisfaccion {
+
+  min-height: 90vh;
+  margin: 0 auto;
+  background-color: #ffffff;
+  padding: 1.5rem;
+  width: 30rem;
+
+  &__caja {
+    display: flex;
+    flex-direction: row;
+
+    h2 {
+      width: 30%;
+    }
+
+  }
+
+  &__titulo {
+    padding: 0;
+    margin-top: .5rem;
+    margin-bottom: -.5rem;
+  }
+
+  &__consulta {
+
+    padding: .5rem 0;
+
+    &-pregunta {
+      margin-bottom: .5rem;
+    }
+
+    &-caritas {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      align-items: center;
+
+      p {
+        text-align: center;
+      }
+
+      i {
+
+        &:not( :last-child ) {
+          margin-top: 1rem;
+        }
+        font-size: 3rem;
+      }
+
+    }
+
+  }
+
+}

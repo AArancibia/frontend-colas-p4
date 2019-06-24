@@ -13,6 +13,7 @@ import {DetEstadoTicket} from '@app/core/models/detestadoticket.model';
 import {NzNotificationService} from 'ng-zorro-antd';
 import {VentanillaService} from '@app/core/services/ventanilla/ventanilla.service';
 import {Ventanilla} from '@app/core/models/ventanilla.model';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-ticket',
@@ -47,6 +48,7 @@ export class TicketComponent implements OnInit, AfterViewInit {
     private notificationService: NzNotificationService,
     private snackBar: SnackbarService,
     private ventanillaService: VentanillaService,
+    private router: Router,
   ) {
 
   }
@@ -151,6 +153,7 @@ export class TicketComponent implements OnInit, AfterViewInit {
   }
 
   estadosTickets( estado: number ) {
+    if ( this.estadoVentanilla === 7 ) return;
     switch ( estado ) {
       // LLAMANDO
       case 2: {
@@ -203,7 +206,8 @@ export class TicketComponent implements OnInit, AfterViewInit {
           return;
         }
         if ( this.validacionEstados.estadoticketId === 1 ) return;
-        this.ticketService.guardarNuevoEstado( this.selectTicket.id, 4 )
+        const idestado = this.validacionEstados.estadoticketId === 2 ? 6 : 4;
+        this.ticketService.guardarNuevoEstado( this.selectTicket.id,  idestado )
           .pipe(
             tap( () => {
               this.activo = 0;
@@ -472,6 +476,151 @@ export class TicketComponent implements OnInit, AfterViewInit {
         ),
       )
       .subscribe();
+  }
+
+  mostrarSatisfaccion() {
+    //const contenido = document.getElementById( div ).innerHTML;
+    let ventana = window.open('', 'IMPRIMIR', 'height=100%;' );
+    ventana.document.open();
+    ventana.document.write(
+      `
+        <html>
+          <head>
+            <title>Satisfacción</title>
+            <link rel="stylesheet" href="assets/css/font/flaticon.css">
+          </head>
+          <style>
+            .satisfaccion {
+              min-height: 90vh;
+              margin: 0 auto;
+              background-color: #ffffff;
+              padding: 1.5rem;
+              width: 30rem;
+              border: 1px solid #8d8d8d;;
+            }
+            
+            .satisfaccion__consulta {
+              padding: .5rem 0;
+            }
+            
+            .satisfaccion__consulta-caritas {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: space-around;
+                align-items: center;
+            }
+            
+            .satisfaccion__consulta-caritas p {
+              text-align: center;
+            }
+            
+            .satisfaccion__consulta-caritas i {
+              font-size: 3rem;
+            }
+            
+            .satisfaccion__consulta-pregunta {
+                  margin-bottom: .5rem;
+            }
+            
+            .satisfaccion__caja {
+                display: flex;
+                flex-direction: row;
+              }
+              
+              .satisfaccion__caja h2 {
+                text-align: center;
+                width: 30%;
+              }
+              
+              .satisfaccion__titulo {
+                padding: 0;
+                margin-top: .5rem;
+                margin-bottom: -.5rem;
+                text-align: center;
+              }
+              .u-margin-top-small {
+                margin-top: 2rem;
+              }
+          </style>
+        </html>
+        <body onload="window.print();window.close()">
+                <div class="satisfaccion">
+    <div class="satisfaccion__caja">
+      <h2 class="satisfaccion__caja-codigo">${ this.selectTicket.codigo }</h2>
+      <p class="satisfaccion__caja-texto">
+        Entregar al salir,
+        su opinion nos ayuda a mejorar, porque usted nos importa
+      </p>
+    </div>
+    <h1 class="text-center satisfaccion__titulo">
+      Medidor de Satisfacción
+    </h1>
+    <h3 class="text-center satisfaccion__titulo">
+      Marque con una "X" o encierre con un circulo "O"
+    </h3>
+    <div class="u-margin-top-small satisfaccion__consulta">
+      <h3 class="satisfaccion__consulta-pregunta">
+        ¿La información que se brindó fue útil?
+      </h3>
+      <div class="u-margin-top-small satisfaccion__consulta-caritas">
+        <span>
+          <img src="assets/images/001-happy.png" alt="">
+          <p>Mal</p>
+        </span>
+        <span>
+          <img src="assets/images/003-surprised.png" alt="">
+          <p>Neutral</p>
+        </span>
+        <span>
+          <img src="assets/images/002-sad.png" alt="">
+          <p>Bien</p>
+        </span>
+      </div>
+    </div>
+    <div class="satisfaccion__consulta">
+      <h3 class="satisfaccion__consulta-pregunta">
+        ¿Está satisfecho con la atención brindada?
+      </h3>
+      <div class="u-margin-top-small satisfaccion__consulta-caritas">
+        <span>
+          <img src="assets/images/001-happy.png" alt="">
+          <p>Mal</p>
+        </span>
+        <span>
+          <img src="assets/images/003-surprised.png" alt="">
+          <p>Neutral</p>
+        </span>
+        <span>
+          <img src="assets/images/002-sad.png" alt="">
+          <p>Bien</p>
+        </span>
+      </div>
+    </div>
+    <div class="satisfaccion__consulta">
+      <h3 class="satisfaccion__consulta-pregunta">
+        ¿Es de su agrado la nueva plataforma?
+      </h3>
+      <div class="u-margin-top-small satisfaccion__consulta-caritas">
+        <span>
+          <img src="assets/images/001-happy.png" alt="">
+          <p>Mal</p>
+        </span>
+        <span>
+          <img src="assets/images/003-surprised.png" alt="">
+          <p>Neutral</p>
+        </span>
+        <span>
+          <img src="assets/images/002-sad.png" alt="">
+          <p>Bien</p>
+        </span>
+      </div>
+    </div>
+  </div>
+        </body>
+      `
+    );
+    ventana.document.close();
   }
 
   clickMe(): void {
