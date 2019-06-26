@@ -6,31 +6,41 @@
     [nzCollapsedWidth]="0"
     [nzZeroTrigger]="zeroTrigger"
     class="boton-sider"
-    style="height: 100vh; position: relative;"
+    style="min-height: 100vh; position: relative;"
   >
     <div class="logo"></div>
-    <ul nz-menu [nzTheme]="'dark'" [nzMode]="'inline'" [nzInlineCollapsed]="isCollapsed">
-      <li nz-menu-item>
-        <span><i nz-icon nzType="minus-circle" nzTheme="outline">
+    <ul nz-menu [nzTheme]="'dark'" [nzMode]="'inline'"
+        class="sider__lista"
+        [nzInlineCollapsed]="isCollapsed">
+      <li nz-menu-item class="sider__lista--item" style="background-color: #001529;">
+        <!--<span><i nz-icon nzType="minus-circle" nzTheme="outline">
           <span class="nav-text">Ocupado</span>
-        </i></span>
-      </li>
-      <li nz-menu-item>
-        <span>
-          <i nz-icon nzType="bell" nzTheme="outline"></i><span class="nav-text">Llamar</span>
-        </span>
-      </li>
-      <li nz-menu-item>
-        <span><i nz-icon type="upload"></i><span class="nav-text">Atender</span></span>
-      </li>
-      <li nz-menu-item>
-        <span><i nz-icon nzType="caret-right" nzTheme="fill"></i><span class="nav-text">Siguiente</span></span>
+        </i></span>-->
+        <div class="example-input">
+          <input
+            placeholder="Buscar Usuario..."
+            nz-input
+            [(ngModel)]="inputValue"
+            (input)="onInput($event.target?.value)"
+            [nzAutocomplete]="auto"
+          />
+          <nz-autocomplete nzBackfill #auto>
+            <nz-auto-option
+              *ngFor="let usuario of usuarios" [nzValue]="usuario.username"
+              (click)="guardarVentanilla( usuario )"
+            >
+              {{ usuario.username }}
+            </nz-auto-option>
+          </nz-autocomplete>
+        </div>
       </li>
     </ul>
   </nz-sider>
   <nz-layout>
     <!--<nz-header style="background: #fff; padding:0;"></nz-header>-->
-    <nz-content style="padding: 1rem;">
+    <nz-content
+      *ngIf="ventanillaService.ventanilla.codigoVentanilla"
+      style="padding: 1rem;position: relative;">
       <router-outlet></router-outlet>
     </nz-content>
     <nz-footer style="text-align: center;background-color: #ffffff;">

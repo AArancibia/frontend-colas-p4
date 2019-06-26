@@ -30,7 +30,7 @@ export class TicketComponent implements OnInit, AfterViewInit {
   listVentanillas: Ventanilla[] = [];
   idtematica: number;
   idtramite: number;
-  ventanilla: any;
+  ventanilla: number;// Esto solo tiene el id
   derivar: boolean = false;
   ventanillaDerivar: any;
   visible: boolean;
@@ -54,9 +54,21 @@ export class TicketComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    this.listarVentanillas();
-    this.listarTematicas();
-    this.ventanilla = Number( prompt('Ventanilla' ) );
+    this.ventanillaService.statusV$
+      .pipe(
+        tap(
+          ( ventanilla: Ventanilla ) => {
+            this.listarVentanillas();
+            this.listarTematicas();
+            this.ventanilla = ventanilla.id;
+            this.cargarConfiguracion();
+          }
+        ),
+      )
+      .subscribe();
+  }
+
+  cargarConfiguracion() {
     this.listarTickets();
     this.nuevoTicket();
     this.ventanillaAsignadaAlTicket();
@@ -153,7 +165,7 @@ export class TicketComponent implements OnInit, AfterViewInit {
   }
 
   estadosTickets( estado: number ) {
-    if ( this.estadoVentanilla === 7 ) return;
+    if ( this.estadoVentanilla === 4 ) return;
     switch ( estado ) {
       // LLAMANDO
       case 2: {
@@ -404,6 +416,10 @@ export class TicketComponent implements OnInit, AfterViewInit {
   }
 
   listarTramitePorTematica( idtematica ) {
+
+    this.ticketService.actualizarTematicaOrTramite( this.selectTicket.id , { idtematica })
+      .pipe()
+      .subscribe();
     this.tematicaService.tramitesByTematica( idtematica )
       .pipe(
         tap( ( tramites: Tramite[] ) => {
@@ -467,11 +483,12 @@ export class TicketComponent implements OnInit, AfterViewInit {
   }
 
   ultimoEstadoVentanilla() {
+    if ( !this.ventanilla ) return;
     this.ventanillaService.ultimoEstado( this.ventanilla )
       .pipe(
         tap(
           ( estadoVentanilla: any ) => {
-            this.estadoVentanilla = estadoVentanilla[ 0 ].tbEstadoventanillaId;
+            this.estadoVentanilla = estadoVentanilla !== null ? estadoVentanilla.tbEstadoventanillaId : 3;
           }
         ),
       )

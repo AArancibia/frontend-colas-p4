@@ -166,3 +166,17 @@
   margin-top: -1rem;
   padding: .8rem;
 }
+
+.ventanilla__codigo {
+  position: absolute;
+  top: 0rem;
+  left: 0rem;
+  z-index: 1;
+  height: 2.5rem;
+  width: 4rem;
+  background-color: #002140;
+  color: #ffffff;
+  border-radius: 0rem 1rem 1rem 1rem;
+  text-align: center;
+  padding: .6rem;
+}
