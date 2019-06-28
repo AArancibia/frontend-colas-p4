@@ -40,6 +40,7 @@ export class TicketComponent implements OnInit, AfterViewInit {
   detallesTramite: any;
   activo: number = 0;
   estadoVentanilla: number = 0;
+  ventanillaSeleccionada: number;
   constructor(
     private wsSocket: WebsocketService,
     public ticketService: TicketService,
@@ -61,11 +62,11 @@ export class TicketComponent implements OnInit, AfterViewInit {
             this.listarVentanillas();
             this.listarTematicas();
             this.ventanilla = ventanilla.id;
-            this.cargarConfiguracion();
           }
         ),
       )
       .subscribe();
+    this.cargarConfiguracion();
   }
 
   cargarConfiguracion() {
@@ -124,6 +125,8 @@ export class TicketComponent implements OnInit, AfterViewInit {
       .pipe(
         tap( ( tickets: Ticket[] ) => {
           this.listTicket = tickets.length > 0 ? tickets.filter( ticket => ticket.idventanilla == this.ventanilla || !ticket.idventanilla ) : [];
+          const urgentes: Ticket[] = this.listTicket.filter( ( ticket: Ticket ) => ticket.urgente );
+          console.log( urgentes );
           const preferenciales: Ticket[] = this.listTicket.filter( ( ticket: Ticket ) => ticket.preferencial );
           if ( preferenciales.length > 0 ) {
             preferenciales.reverse();
@@ -136,6 +139,7 @@ export class TicketComponent implements OnInit, AfterViewInit {
               }
             );
           }
+          console.log( this.listTicket );
           if ( this.listTicket.length > 0 ) {
             this.datosTicket( this.listTicket[ 0 ] );
             this.masDetalle();
@@ -155,6 +159,7 @@ export class TicketComponent implements OnInit, AfterViewInit {
             this.listTicket = [ ...this.listTicket, ticket];
           }
           this.listTicket = [ ...this.listTicket ];
+          console.log( this.listTicket );
           if ( this.listTicket.length <= 1 ) {
             this.datosTicket( this.listTicket[ 0 ] );
             this.masDetalle();
@@ -301,6 +306,14 @@ export class TicketComponent implements OnInit, AfterViewInit {
           this.listTicket = [ ...this.listTicket ];
           this.datosTicket( this.listTicket[ 0 ] );
           if ( this.listTicket.length > 0 && ticket.idventanilla === this.ventanilla ) this.masDetalle();
+          /*if ( this.listTicket[ 0 ].idtematica === null
+            && this.validacionEstados.estadoticketId === 1
+            && ticket.idventanilla === this.ventanilla  ) {
+            this.notificationService.create(
+              'warning', 'Notificación',
+              'Ticket vino sin Tematica',
+            );
+          }*/
         }),
       )
       .subscribe();
@@ -311,9 +324,8 @@ export class TicketComponent implements OnInit, AfterViewInit {
       .pipe(
         tap(
           ( ticket: Ticket ) => {
-            //console.log( ticket );
+            console.log( ticket );
             const indexTicket = this.listTicket.findIndex( ( item ) => item.codigo == ticket.codigo );
-            console.log( indexTicket );
             if ( ticket.idventanilla != this.ventanilla ) {
               if ( indexTicket > -1 ) {
                 this.listTicket.splice( indexTicket , 1 );
@@ -323,6 +335,7 @@ export class TicketComponent implements OnInit, AfterViewInit {
             }
             this.listTicket = [ ...this.listTicket ];
             this.datosTicket( this.listTicket[ 0 ] );
+            //console.log( this.listTicket[ 0 ]  );
             if ( ticket.idventanilla === this.ventanilla ) {
               this.masDetalle();
             }
@@ -366,9 +379,9 @@ export class TicketComponent implements OnInit, AfterViewInit {
     if ( this.selectTicket.idtematica === null ) {
       this.pasos = 0;
     } else {
-      console.log( 'haciendo listar tramite' );
       this.listarTramitePorTematica( this.selectTicket.idtematica );
     }
+
     if ( this.selectTicket.idtramite && this.validacionEstados.estadoticketId === 3 ) {
       this.mostrarDetalleTramite( this.selectTicket.idtramite );
       //this.pasos = 2;
@@ -416,8 +429,11 @@ export class TicketComponent implements OnInit, AfterViewInit {
   }
 
   listarTramitePorTematica( idtematica ) {
-
-    this.ticketService.actualizarTematicaOrTramite( this.selectTicket.id , { idtematica })
+    const idtramite = this.selectTicket.idtramite ? this.selectTicket.idtramite : null;
+    this.ticketService.actualizarTematicaOrTramite( this.selectTicket.id , {
+      idtematica,
+      idtramite,
+    })
       .pipe()
       .subscribe();
     this.tematicaService.tramitesByTematica( idtematica )

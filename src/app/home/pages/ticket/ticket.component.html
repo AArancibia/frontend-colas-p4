@@ -98,7 +98,16 @@
                   Derivar
                 </p>
                 <ng-template #contentTemplate>
-                  <nz-input-group nzSearch [nzSuffix]="suffixIconSearch" >
+
+                  <nz-select
+                    [(ngModel)]="ventanillaDerivar"
+                    (ngModelChange)="estadosTickets( 5 )"
+                    style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
+                    <nz-option *ngFor="let ventanilla of listVentanillas"
+                               [nzValue]="ventanilla.id" [nzLabel]="ventanilla.codigoVentanilla"></nz-option>
+                  </nz-select>
+
+                  <!--<nz-input-group nzSearch [nzSuffix]="suffixIconSearch" >
                     <input type="number"
                            [nzSize]="'small'"
                            placeholder="Ventanilla a Asignar"
@@ -108,7 +117,7 @@
                   </nz-input-group>
                   <ng-template #suffixIconSearch>
                     <i nz-icon type="search"></i>
-                  </ng-template>
+                  </ng-template>-->
 
                   <!--<nz-select
                     [(ngModel)]="ventanillaDerivar"
@@ -141,14 +150,14 @@
           <nz-avatar [nzSize]="64" nzIcon="user"></nz-avatar>
         </div>
         <div nz-col [nzXs]="11" [nzSm]="9" [nzMd]="11" [nzLg]="11"  class="card__contribuyente">
+          <p>{{ 'idtramite : ' + idtramite }}</p>
+          <p>{{ selectTicket ? selectTicket.idtramite : '' }}</p>
           <p>{{ mostrarInfoAdministrado.idcontribuyente }}</p>
           <p>
               {{ mostrarInfoAdministrado.nombre }} {{ mostrarInfoAdministrado.apepat }} {{ mostrarInfoAdministrado.apemat }}
           </p>
           <p>{{ mostrarInfoAdministrado.nrodoc }}</p>
-          <p>{{ estadoVentanilla }}</p>
-          <!--<p>{{ selectTicket ? selectTicket.idtematica : '' }}</p>-->
-          <!--<p>{{ 'pasos: ' + pasos }} || {{ 'idtramite: ' + idtramite }}</p>-->
+          <!--<p>{{ estadoVentanilla }}</p>-->
         </div>
         <div nz-col [nzXs]="5" [nzSm]="10" [nzMd]="7" [nzLg]="8" class="card__tematica">
           <p>Temática</p>
