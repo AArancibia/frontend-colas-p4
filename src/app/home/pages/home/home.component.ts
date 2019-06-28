@@ -37,7 +37,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   guardarVentanilla( { idusuario } ) {
-    console.log( idusuario );
     this.ventanillaService.obtenerVentanillaporIdUsuario( idusuario )
       .pipe(
         tap(

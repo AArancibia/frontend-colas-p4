@@ -94,7 +94,6 @@ export class TicketComponent implements OnInit, AfterViewInit {
   guardarTramite() {
     const ticket: Ticket = {
       ...this.selectTicket,
-      //idtramite: this.idtramite,
     };
     const { idtramite, idtematica, id } = ticket;
     this.ticketService.actualizarTematicaOrTramite( id, {
@@ -106,12 +105,6 @@ export class TicketComponent implements OnInit, AfterViewInit {
           ( ticketDB: Ticket ) => {
             this.notificationService.info(
               'Tramite Asignado', `Tramite ${ this.getTramite( idtramite ) } asignado a ticket ${ this.selectTicket.codigo }`,
-              {
-                nzStyle: {
-                  //marginTop: '2.5rem',
-                  //marginRight: '5rem',
-                },
-              }
             );
             this.idtramite = this.selectTicket.idtramite;
           }
@@ -139,7 +132,6 @@ export class TicketComponent implements OnInit, AfterViewInit {
               }
             );
           }
-          console.log( this.listTicket );
           if ( this.listTicket.length > 0 ) {
             this.datosTicket( this.listTicket[ 0 ] );
             this.masDetalle();
@@ -453,6 +445,7 @@ export class TicketComponent implements OnInit, AfterViewInit {
         tap(
           ( ventanillas: Ventanilla[] ) => {
             this.listVentanillas = ventanillas.filter( ( ventanilla: Ventanilla ) => ventanilla.id !== this.ventanilla );
+            console.log( this.listVentanillas );
           }
         ),
       )
