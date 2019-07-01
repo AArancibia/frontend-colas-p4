@@ -118,19 +118,30 @@ export class TicketComponent implements OnInit, AfterViewInit {
       .pipe(
         tap( ( tickets: Ticket[] ) => {
           this.listTicket = tickets.length > 0 ? tickets.filter( ticket => ticket.idventanilla == this.ventanilla || !ticket.idventanilla ) : [];
-          const urgentes: Ticket[] = this.listTicket.filter( ( ticket: Ticket ) => ticket.urgente );
-          console.log( urgentes );
-          const preferenciales: Ticket[] = this.listTicket.filter( ( ticket: Ticket ) => ticket.preferencial );
-          if ( preferenciales.length > 0 ) {
-            preferenciales.reverse();
-            preferenciales.map(
-              ( preferencial: Ticket, index, array ) => {
-                const ticketIndex = this.listTicket.findIndex( ticket => ticket.codigo == preferencial.codigo );
-                console.log( preferencial );
-                this.listTicket.splice( ticketIndex, 1 );
-                this.listTicket.splice( 1, 0, preferencial );
+          if ( this.listTicket.length > 0 ) {
+            const prioridades = {
+              1: [],
+              2: [],
+              3: [],
+              4: [],
+            };
+            this.listTicket.forEach(
+              ( ticket: Ticket ) => {
+                if ( ticket.urgente && ticket.preferencial ) {
+                  prioridades['1'].push( ticket );
+                } else if ( ticket.urgente && !ticket.preferencial ) {
+                  prioridades['2'].push( ticket );
+                } else if ( ticket.preferencial && !ticket.urgente ) {
+                  prioridades['3'].push( ticket );
+                } else {
+                  prioridades['4'].push( ticket );
+                }
               }
             );
+            this.listTicket.splice( 0 );
+            const ordenados = prioridades['1'].concat( prioridades['2'] ).concat( prioridades['3']  ).concat( prioridades['4']  );
+            this.listTicket =  ordenados;
+            console.log( this.listTicket );
           }
           if ( this.listTicket.length > 0 ) {
             this.datosTicket( this.listTicket[ 0 ] );
@@ -145,13 +156,56 @@ export class TicketComponent implements OnInit, AfterViewInit {
     this.ticketService.nuevoTicket()
       .pipe(
         tap( ( ticket: Ticket ) => {
-          if ( ticket.preferencial ) {
-            this.listTicket.splice( 1, 0, ticket );
+
+          if ( this.listTicket.length > 0 ) {
+
+            this.listTicket.push( ticket );
+            const prioridades = {
+              1: [],
+              2: [],
+              3: [],
+              4: [],
+            };
+            this.listTicket.forEach(
+              ( item: Ticket ) => {
+                if ( item.urgente && item.preferencial ) {
+                  prioridades['1'].push( item );
+                } else if ( item.urgente && !item.preferencial ) {
+                  prioridades['2'].push( item );
+                } else if ( item.preferencial && !item.urgente ) {
+                  prioridades['3'].push( item );
+                } else {
+                  prioridades['4'].push( item );
+                }
+              }
+            );
+
+            /*const indexPrioridad1 = prioridades['1'].length > 0 ? this.listTicket.findIndex( item => item.codigo == prioridades['1'][ prioridades['1'].length - 1 ].codigo ) : - 1;
+            const indexPrioridad2 = prioridades['2'].length > 0 ?  this.listTicket.findIndex( item => item.codigo == prioridades['2'][ prioridades['2'].length - 1 ].codigo ) : - 1;
+            const indexPrioridad3 = prioridades['3'].length > 0 ?  this.listTicket.findIndex( item => item.codigo == prioridades['3'][ prioridades['3'].length - 1 ].codigo ) : - 1;
+            const indexPrioridad4 = prioridades['4'].length > 0 ?  this.listTicket.findIndex( item => item.codigo == prioridades['4'][ prioridades['4'].length - 1 ].codigo ) : - 1;
+*/
+            this.listTicket.splice( 0 );
+            const ordenados = prioridades['1'].concat( prioridades['2'] ).concat( prioridades['3']  ).concat( prioridades['4']  );
+            this.listTicket =  ordenados;
+
+            /*if ( ticket.preferencial && ticket.urgente ) {
+              this.listTicket.splice( indexPrioridad1 + 1, 0, ticket );
+            } else if ( ticket.urgente && !ticket.preferencial ) {
+              this.listTicket.splice( indexPrioridad2 + 1, 0, ticket );
+            } else if ( ticket.preferencial && !ticket.urgente ) {
+              this.listTicket.splice( indexPrioridad3 + 1, 0, ticket );
+              console.log( indexPrioridad3  );
+            } else {
+              this.listTicket.splice( indexPrioridad4 + 1, 0, ticket );
+            }*/
           } else {
-            this.listTicket = [ ...this.listTicket, ticket];
+            this.listTicket.push( ticket );
+            this.listTicket = [ ...this.listTicket ];
           }
-          this.listTicket = [ ...this.listTicket ];
-          console.log( this.listTicket );
+
+          //this.listTicket = [ ...this.listTicket ];
+
           if ( this.listTicket.length <= 1 ) {
             this.datosTicket( this.listTicket[ 0 ] );
             this.masDetalle();
