@@ -127,7 +127,9 @@ export class TicketComponent implements OnInit, AfterViewInit {
             };
             this.listTicket.forEach(
               ( ticket: Ticket ) => {
-                if ( ticket.urgente && ticket.preferencial ) {
+                ticket.detEstados.sort( ( a, b ) => new Date( b.fecha ).getTime() -  new Date( a.fecha ).getTime() );
+                const item = ticket.detEstados[ 0 ].estadoticketId;
+                if ( ticket.urgente && ticket.preferencial || item > 1 ) {
                   prioridades['1'].push( ticket );
                 } else if ( ticket.urgente && !ticket.preferencial ) {
                   prioridades['2'].push( ticket );
@@ -167,15 +169,19 @@ export class TicketComponent implements OnInit, AfterViewInit {
               4: [],
             };
             this.listTicket.forEach(
-              ( item: Ticket ) => {
-                if ( item.urgente && item.preferencial ) {
-                  prioridades['1'].push( item );
-                } else if ( item.urgente && !item.preferencial ) {
-                  prioridades['2'].push( item );
-                } else if ( item.preferencial && !item.urgente ) {
-                  prioridades['3'].push( item );
+              ( item: Ticket, index ) => {
+                if ( index !== 0) {
+                  if ( item.urgente && item.preferencial ) {
+                    prioridades['1'].push( item );
+                  } else if ( item.urgente && !item.preferencial ) {
+                    prioridades['2'].push( item );
+                  } else if ( item.preferencial && !item.urgente ) {
+                    prioridades['3'].push( item );
+                  } else {
+                    prioridades['4'].push( item );
+                  }
                 } else {
-                  prioridades['4'].push( item );
+                  prioridades['1'].push( item );
                 }
               }
             );
@@ -185,6 +191,7 @@ export class TicketComponent implements OnInit, AfterViewInit {
             const indexPrioridad3 = prioridades['3'].length > 0 ?  this.listTicket.findIndex( item => item.codigo == prioridades['3'][ prioridades['3'].length - 1 ].codigo ) : - 1;
             const indexPrioridad4 = prioridades['4'].length > 0 ?  this.listTicket.findIndex( item => item.codigo == prioridades['4'][ prioridades['4'].length - 1 ].codigo ) : - 1;
 */
+            //const primero = this.listTicket.find( ( item, index ) => index === 0 );
             this.listTicket.splice( 0 );
             const ordenados = prioridades['1'].concat( prioridades['2'] ).concat( prioridades['3']  ).concat( prioridades['4']  );
             this.listTicket =  ordenados;
@@ -645,7 +652,7 @@ export class TicketComponent implements OnInit, AfterViewInit {
       </h3>
       <div class="u-margin-top-small satisfaccion__consulta-caritas">
         <span>
-          <img src="assets/images/001-happy.png" alt="">
+          <img src="assets/images/002-sad.png" alt="">
           <p>Mal</p>
         </span>
         <span>
@@ -653,7 +660,7 @@ export class TicketComponent implements OnInit, AfterViewInit {
           <p>Neutral</p>
         </span>
         <span>
-          <img src="assets/images/002-sad.png" alt="">
+          <img src="assets/images/001-happy.png" alt="">
           <p>Bien</p>
         </span>
       </div>
@@ -664,7 +671,7 @@ export class TicketComponent implements OnInit, AfterViewInit {
       </h3>
       <div class="u-margin-top-small satisfaccion__consulta-caritas">
         <span>
-          <img src="assets/images/001-happy.png" alt="">
+          <img src="assets/images/002-sad.png" alt="">
           <p>Mal</p>
         </span>
         <span>
@@ -672,7 +679,7 @@ export class TicketComponent implements OnInit, AfterViewInit {
           <p>Neutral</p>
         </span>
         <span>
-          <img src="assets/images/002-sad.png" alt="">
+          <img src="assets/images/001-happy.png" alt="">
           <p>Bien</p>
         </span>
       </div>
@@ -683,7 +690,7 @@ export class TicketComponent implements OnInit, AfterViewInit {
       </h3>
       <div class="u-margin-top-small satisfaccion__consulta-caritas">
         <span>
-          <img src="assets/images/001-happy.png" alt="">
+          <img src="assets/images/002-sad.png" alt="">
           <p>Mal</p>
         </span>
         <span>
@@ -691,7 +698,7 @@ export class TicketComponent implements OnInit, AfterViewInit {
           <p>Neutral</p>
         </span>
         <span>
-          <img src="assets/images/002-sad.png" alt="">
+          <img src="assets/images/001-happy.png" alt="">
           <p>Bien</p>
         </span>
       </div>
