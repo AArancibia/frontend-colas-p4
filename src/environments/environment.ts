@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
   url_server: 'http://192.168.10.208:4000/api/',
-  url_server_tupa: 'http://192.168.10.208:4001/api/',
+  url_server_tupa: 'http://192.168.10.207:4520/api/',//208:4001
   wsUrl: 'http://192.168.10.208:8081',
 };
 

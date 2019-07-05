@@ -1,5 +1,5 @@
 <div class="ventanilla__codigo">
-    {{ ventanillaService.ventanilla.codigoVentanilla }}
+    {{ ventanillaService.ventanilla.codigoventanilla }}
 </div>
 <div nz-row >
   <div nz-col [nzXs]="24" [nzLg]="11" >
@@ -368,7 +368,7 @@
             <i nz-icon type="download"></i>
             <p>Descargar</p>
           </div>
-          <div (click)="mostrarSatisfaccion()">
+          <div style="cursor: pointer" (click)="mostrarSatisfaccion()">
             <i nz-icon type="printer"></i>
             <p>Imprimir Satisfacción</p>
           </div>

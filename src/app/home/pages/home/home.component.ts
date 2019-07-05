@@ -4,6 +4,7 @@ import {Usuario} from '@app/core/models/usuario.model';
 import {tap} from 'rxjs/operators';
 import {VentanillaService} from '@app/core/services/ventanilla/ventanilla.service';
 import {Ventanilla} from '@app/core/models/ventanilla.model';
+import { NzNotificationService } from 'ng-zorro-antd';
 
 @Component({
   selector: 'app-home',
@@ -20,6 +21,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   constructor(
     private usuarioService: UsuarioService,
     private ventanillaService: VentanillaService,
+    private notificationService: NzNotificationService,
   ) { }
 
   ngOnInit() {
@@ -41,8 +43,18 @@ export class HomeComponent implements OnInit, AfterViewInit {
       .pipe(
         tap(
           ( ventanilla: Ventanilla ) => {
-            this.ventanillaService.ventanilla = ventanilla;
-            this.ventanillaService.ventanillaS.next( ventanilla );
+            if ( ventanilla ) {
+              this.ventanillaService.ventanilla = ventanilla;
+              this.ventanillaService.ventanillaS.next( ventanilla );
+              this.isCollapsed = true;
+            } else {
+              this.notificationService.error(
+                'No tienes una ventanilla asignada', 'Consulta con el administrador del Sistema',
+                {
+                  nzDuration: 0,
+                }
+              )
+            }
           }
         ),
       )

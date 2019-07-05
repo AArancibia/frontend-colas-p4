@@ -62,6 +62,7 @@ export class TicketComponent implements OnInit, AfterViewInit {
             this.listarVentanillas();
             this.listarTematicas();
             this.ventanilla = ventanilla.id;
+            this.listarTickets();
           }
         ),
       )
@@ -70,7 +71,6 @@ export class TicketComponent implements OnInit, AfterViewInit {
   }
 
   cargarConfiguracion() {
-    this.listarTickets();
     this.nuevoTicket();
     this.ventanillaAsignadaAlTicket();
     this.nuevoEstadoTicket();
@@ -388,7 +388,6 @@ export class TicketComponent implements OnInit, AfterViewInit {
             }
             this.listTicket = [ ...this.listTicket ];
             this.datosTicket( this.listTicket[ 0 ] );
-            //console.log( this.listTicket[ 0 ]  );
             if ( ticket.idventanilla === this.ventanilla ) {
               this.masDetalle();
             }
@@ -399,26 +398,14 @@ export class TicketComponent implements OnInit, AfterViewInit {
   }
 
   datosTicket( ticket: Ticket ) {
-    //console.log( ticket )
     if ( ticket ) {
       this.selectTicket = ticket;
       this.mostrarInfoAdministrado = { ...this.selectTicket.administrado };
-      /*this.idtramite = this.selectTicket.idtramite;
-      if ( this.selectTicket.idtematica === null ) {
-        this.pasos = 0;
-      } else {
-        console.log( 'haciendo listar tramite' );
-        this.listarTramitePorTematica( this.selectTicket.idtematica );
-      }*/
       this.selectTicket.detEstados.sort( ( a, b ) => new Date( b.fecha ).getTime() -  new Date( a.fecha ).getTime() );
       this.validacionEstados = this.selectTicket.detEstados[ 0 ];
       if ( this.validacionEstados.estadoticketId === 3 ) {
         this.derivar = true;
       }
-      /*if ( this.selectTicket.idtramite && this.validacionEstados.estadoticketId === 3 ) {
-        this.mostrarDetalleTramite( this.selectTicket.idtramite );
-        //this.pasos = 2;
-      }*/
     } else {
       this.mostrarInfoAdministrado = {};
       this.selectTicket = null;
@@ -437,7 +424,6 @@ export class TicketComponent implements OnInit, AfterViewInit {
 
     if ( this.selectTicket.idtramite && this.validacionEstados.estadoticketId === 3 ) {
       this.mostrarDetalleTramite( this.selectTicket.idtramite );
-      //this.pasos = 2;
     }
   }
 
@@ -447,20 +433,11 @@ export class TicketComponent implements OnInit, AfterViewInit {
   }
 
   mostrarDetalleTramite( idtramite ) {
-    /*if ( this.validacionEstados.estadoticketId === 2 || this.validacionEstados.estadoticketId === 1 ) {
-      this.notificationService.remove();
-      this.notificationService.create(
-        'warning', 'Notificación',
-        'Necesita primero atender el ticket',
-      );
-      return;
-    }*/
     this.tramiteService.obtenerDetallesDeTramite( idtramite )
       .pipe(
         tap( ( detalleTramite ) => {
           console.log( detalleTramite );
           this.detallesTramite = detalleTramite;
-          //this.idtramite = idtramite;
           this.selectTicket.idtramite = idtramite;
           this.pasos = 2;
         }),
