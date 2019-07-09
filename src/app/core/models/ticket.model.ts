@@ -1,5 +1,6 @@
 import { Administrado } from './administrado.model';
 import {DetEstadoTicket} from '@app/core/models/detestadoticket.model';
+import {Tipoticket} from '@app/core/models/tipoticket.model';
 
 export interface Ticket {
   id: number;
@@ -7,6 +8,7 @@ export interface Ticket {
   idventanilla: number;
   administrado: Administrado;
   idtipoticket: number;
+  tipoTicket: Tipoticket;
   codigo: string;
   urgente: boolean;
   preferencial: boolean;

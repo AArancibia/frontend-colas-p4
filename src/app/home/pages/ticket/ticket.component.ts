@@ -40,7 +40,7 @@ export class TicketComponent implements OnInit, AfterViewInit {
   detallesTramite: any;
   activo: number = 0;
   estadoVentanilla: number = 0;
-  ventanillaSeleccionada: number;
+  datosVentanilla: Ventanilla = new Ventanilla();
   constructor(
     private wsSocket: WebsocketService,
     public ticketService: TicketService,
@@ -59,6 +59,7 @@ export class TicketComponent implements OnInit, AfterViewInit {
       .pipe(
         tap(
           ( ventanilla: Ventanilla ) => {
+            this.datosVentanilla = ventanilla;
             this.listarVentanillas();
             this.listarTematicas();
             this.ventanilla = ventanilla.id;
@@ -76,6 +77,24 @@ export class TicketComponent implements OnInit, AfterViewInit {
     this.nuevoEstadoTicket();
     this.ticketDerivado();
     this.ultimoEstadoVentanilla();
+    this.ticketUrgente();
+  }
+
+  ticketUrgente() {
+    this.ticketService.ticketUrgente()
+      .pipe(
+        tap(
+          ( ticketUrgenteBD: Ticket ) => {
+            if ( this.listTicket.length > 0 ) {
+              const indexTicket =this.listTicket.findIndex( ( ticket: Ticket ) => ticket.codigo == ticketUrgenteBD.codigo );
+              this.listTicket.splice( indexTicket, 1 );
+              this.listTicket.splice( 1, 0 , ticketUrgenteBD );
+              this.listTicket = [ ...this.listTicket ];
+            }
+          }
+        ),
+      )
+      .subscribe();
   }
 
   cambiarTematica( ) {
@@ -143,7 +162,7 @@ export class TicketComponent implements OnInit, AfterViewInit {
             this.listTicket.splice( 0 );
             const ordenados = prioridades['1'].concat( prioridades['2'] ).concat( prioridades['3']  ).concat( prioridades['4']  );
             this.listTicket =  ordenados;
-            console.log( this.listTicket );
+            this.listTicket = this.listTicket.filter( ( ticket: Ticket ) => ticket.tipoTicket.abr === this.datosVentanilla.tipoatencion ).slice();
           }
           if ( this.listTicket.length > 0 ) {
             this.datosTicket( this.listTicket[ 0 ] );
@@ -158,7 +177,7 @@ export class TicketComponent implements OnInit, AfterViewInit {
     this.ticketService.nuevoTicket()
       .pipe(
         tap( ( ticket: Ticket ) => {
-
+          if ( ticket.tipoTicket.abr !== this.datosVentanilla.tipoatencion ) return;
           if ( this.listTicket.length > 0 ) {
 
             this.listTicket.push( ticket );
@@ -186,32 +205,14 @@ export class TicketComponent implements OnInit, AfterViewInit {
               }
             );
 
-            /*const indexPrioridad1 = prioridades['1'].length > 0 ? this.listTicket.findIndex( item => item.codigo == prioridades['1'][ prioridades['1'].length - 1 ].codigo ) : - 1;
-            const indexPrioridad2 = prioridades['2'].length > 0 ?  this.listTicket.findIndex( item => item.codigo == prioridades['2'][ prioridades['2'].length - 1 ].codigo ) : - 1;
-            const indexPrioridad3 = prioridades['3'].length > 0 ?  this.listTicket.findIndex( item => item.codigo == prioridades['3'][ prioridades['3'].length - 1 ].codigo ) : - 1;
-            const indexPrioridad4 = prioridades['4'].length > 0 ?  this.listTicket.findIndex( item => item.codigo == prioridades['4'][ prioridades['4'].length - 1 ].codigo ) : - 1;
-*/
-            //const primero = this.listTicket.find( ( item, index ) => index === 0 );
             this.listTicket.splice( 0 );
             const ordenados = prioridades['1'].concat( prioridades['2'] ).concat( prioridades['3']  ).concat( prioridades['4']  );
             this.listTicket =  ordenados;
 
-            /*if ( ticket.preferencial && ticket.urgente ) {
-              this.listTicket.splice( indexPrioridad1 + 1, 0, ticket );
-            } else if ( ticket.urgente && !ticket.preferencial ) {
-              this.listTicket.splice( indexPrioridad2 + 1, 0, ticket );
-            } else if ( ticket.preferencial && !ticket.urgente ) {
-              this.listTicket.splice( indexPrioridad3 + 1, 0, ticket );
-              console.log( indexPrioridad3  );
-            } else {
-              this.listTicket.splice( indexPrioridad4 + 1, 0, ticket );
-            }*/
           } else {
             this.listTicket.push( ticket );
             this.listTicket = [ ...this.listTicket ];
           }
-
-          //this.listTicket = [ ...this.listTicket ];
 
           if ( this.listTicket.length <= 1 ) {
             this.datosTicket( this.listTicket[ 0 ] );
@@ -253,7 +254,7 @@ export class TicketComponent implements OnInit, AfterViewInit {
       }
       // ATENDIENDO
       case 3: {
-        if ( this.validacionEstados.estadoticketId !== 2 ) return;
+        if ( this.validacionEstados.estadoticketId !== 2 ) return;;
         this.ticketService.guardarNuevoEstado( this.selectTicket.id, 3 )
           .pipe(
             tap( () => {
@@ -266,6 +267,7 @@ export class TicketComponent implements OnInit, AfterViewInit {
       }
       // ATENDIDO
       case 4: {
+        if ( !this.selectTicket.idtramite && this.validacionEstados.estadoticketId !== 2 ) return;
         if ( this.selectTicket.idtramite !== this.idtramite ) {
           this.notificationService.error(
             'Notificación', 'No ha guardado los ultimos cambios en Asignar Tramite',
@@ -309,7 +311,6 @@ export class TicketComponent implements OnInit, AfterViewInit {
       .pipe(
         tap(
           ( derivado: any ) => {
-            console.log( derivado );
             const ticket: Ticket = derivado.ticketaEmitir;
             const ventanillaAntigua = derivado.ventanillaAntigua;
             if ( ticket.idventanilla == this.ventanilla ) {
@@ -350,7 +351,6 @@ export class TicketComponent implements OnInit, AfterViewInit {
             this.listTicket.splice( indexTicketAtendido, 1, ticket );
             for ( let i = 0; i <= ticket.estadosIds.length ; i++ ) {
               if ( ticket.estadosIds[ i ] === 4 || ticket.estadosIds[ i ] === 6 ) {
-                console.log( 'ya no entras' );
                 this.listTicket.splice( indexTicketAtendido, 1 );
                 break;
               }
@@ -377,7 +377,6 @@ export class TicketComponent implements OnInit, AfterViewInit {
       .pipe(
         tap(
           ( ticket: Ticket ) => {
-            console.log( ticket );
             const indexTicket = this.listTicket.findIndex( ( item ) => item.codigo == ticket.codigo );
             if ( ticket.idventanilla != this.ventanilla ) {
               if ( indexTicket > -1 ) {
@@ -436,7 +435,6 @@ export class TicketComponent implements OnInit, AfterViewInit {
     this.tramiteService.obtenerDetallesDeTramite( idtramite )
       .pipe(
         tap( ( detalleTramite ) => {
-          console.log( detalleTramite );
           this.detallesTramite = detalleTramite;
           this.selectTicket.idtramite = idtramite;
           this.pasos = 2;
@@ -482,8 +480,9 @@ export class TicketComponent implements OnInit, AfterViewInit {
       .pipe(
         tap(
           ( ventanillas: Ventanilla[] ) => {
-            this.listVentanillas = ventanillas.filter( ( ventanilla: Ventanilla ) => ventanilla.id !== this.ventanilla );
-            console.log( this.listVentanillas );
+            this.listVentanillas = ventanillas
+              .filter( ( ventanilla: Ventanilla ) => ventanilla.id !== this.ventanilla )
+              .filter( ( ventanilla: Ventanilla ) => ventanilla.tipoatencion === this.datosVentanilla.tipoatencion );
           }
         ),
       )
@@ -503,6 +502,88 @@ export class TicketComponent implements OnInit, AfterViewInit {
         ),
       )
       .subscribe();
+  }
+
+  imprimirDetalleTramite() {
+    const tramite: any = this.detallesTramite[ 0 ];
+    let ventana = window.open('', 'IMPRIMIR', 'height=100%;' );
+    ventana.document.open();
+    ventana.document.write(
+      `
+        <html>
+          <head>
+            <title>Descripcion del Procedimiento</title>
+            <link rel="stylesheet" href="assets/css/font/flaticon.css">
+          </head>
+          <style>
+              .u-margin-top-small {
+                margin-top: 2rem;
+              }
+          </style>
+        </html>
+        <body onload="window.print();window.close()">
+          <div *ngFor="let detalleTramite of detallesTramite">
+        <h5 class="detalle__titulo">Descripción del Procedimiento</h5>
+        <p class="detalle__descripcion">
+          ${ tramite.descripcion }
+        </p>
+        ${
+        tramite.casos.forEach(
+          ( caso ) => {
+            return `
+                <div >
+                  ${ caso.nombre }
+                  <h5 class="detalle__titulo">Requisitos</h5>
+                  <ul class="detalle__requisitos" >
+                  ${
+              caso.requisitos.map(
+                ( requisito ) => {
+                  return `
+                            <li class="detalle__requisitos--item">
+                              <label nz-checkbox >${ requisito.descripcion }</label>
+                            </li>
+                          `;
+                }
+              )
+              }
+                  </ul>
+                </div>
+              `;
+          }
+        )
+        }
+        <h5 class="detalle__titulo">Notas</h5>
+        <p class="detalle__descripcion">colocar las obervaciones o informacion necesaria que facilite el entendimiento del procedimiento</p>
+        <h5 class="detalle__titulo">Canales de Atencion</h5>
+        <p class="detalle__descripcion">Presencial, Virtual, Telefonica</p>
+        <div class="detalle_row">
+          <h5 class="detalle__titulo">Pago por derecho de tramitación</h5>
+          <p class="detalle__descripcion">$/ 500000.00</p>
+        </div>
+        <h5 class="detalle__titulo">Modalidad de Pago</h5>
+        <p>Tarjeta de debito y crédito, agencia bancaria transferencia</p>
+        <div class="detalle_row">
+          <h5 class="detalle__titulo">Plazo</h5>
+          <p class="detalle__descripcion">25 días</p>
+        </div>
+        <div class="detalle_row">
+          <h5 class="detalle__titulo">Calificación</h5>
+          <p class="detalle__descripcion">Aprobación automatica</p>
+        </div>
+        <h5 class="detalle__titulo">Sedes y horarios de atención</h5>
+        <p class="detalle__descripcion">Colacar las sedees</p>
+        <h5 class="detalle__titulo">Instancias de resolución de recursos</h5>
+        <p class="detalle__descripcion">Reconsideracion unidad - presentacion 25 dias/ respuesta 25 dás</p>
+        <p class="detalle__descripcion">Apelación unidad - presentacion 25 dias/ respuesta 25 dias</p>
+        <h5 class="detalle__titulo">Base Legal</h5>
+        <div class="u-margin-bottom-medium">
+          <p class="detalle__descripcion" *ngFor="let blegales of detalleTramite.baseslegales">
+            {{ blegales.descripcion }}
+          </p>
+        </div>
+      </div>
+        </body>
+      `);
   }
 
   ngAfterViewInit(): void {

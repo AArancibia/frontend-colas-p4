@@ -53,6 +53,10 @@ export class TicketService extends Socket {
     });
   }
 
+  ticketUrgente() {
+    return this.fromEvent('[TICKET] URGENTE' );
+  }
+
   ventanillaAsignadaAlTicket() {
     return this.fromEvent('ventanillaAsignadaAlTicket');
   }

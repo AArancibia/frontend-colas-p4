@@ -104,28 +104,8 @@
                     (ngModelChange)="estadosTickets( 5 )"
                     style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
                     <nz-option *ngFor="let ventanilla of listVentanillas"
-                               [nzValue]="ventanilla.id" [nzLabel]="ventanilla.codigoVentanilla"></nz-option>
+                               [nzValue]="ventanilla.id" [nzLabel]="ventanilla.codigoventanilla"></nz-option>
                   </nz-select>
-
-                  <!--<nz-input-group nzSearch [nzSuffix]="suffixIconSearch" >
-                    <input type="number"
-                           [nzSize]="'small'"
-                           placeholder="Ventanilla a Asignar"
-                           (keyup.enter)="estadosTickets( 5 )"
-                           [(ngModel)]="ventanillaDerivar"
-                           nz-input />
-                  </nz-input-group>
-                  <ng-template #suffixIconSearch>
-                    <i nz-icon type="search"></i>
-                  </ng-template>-->
-
-                  <!--<nz-select
-                    [(ngModel)]="ventanillaDerivar"
-                    style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
-                    <nz-option *ngFor="let ventanilla of listVentanillas"
-                               (ngModelChange)="estadosTickets( 5 )"
-                               [nzValue]="ventanilla.id" [nzLabel]="ventanilla.codigoVentanilla"></nz-option>
-                  </nz-select>-->
 
                 </ng-template>
               </div>
@@ -168,7 +148,7 @@
         <div nz-col [nzXs]="1" [nzSm]="1" [nzMd]="1" [nzLg]="1" >
           <!-- && atender -->
           <!-- (click)="mostrarListaTematicas()" -->
-          {{ validacionEstados && validacionEstados.estadoticketId }}
+          <!-- {{ validacionEstados && validacionEstados.estadoticketId }} -->
           <i nz-icon nzType="edit"
              *ngIf="validacionEstados && validacionEstados.estadoticketId === 3; else iconoDisabled"
              (click)="cambiarTematica()"
@@ -360,7 +340,7 @@
       </div>
       <div class="card__right" style="margin-top: 1rem;">
         <div class="card__right__footer">
-          <div>
+          <div (click)="imprimirDetalleTramite()">
             <i nz-icon type="printer"></i>
             <p>Imprimir</p>
           </div>
