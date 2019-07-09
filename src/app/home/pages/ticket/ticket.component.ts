@@ -64,6 +64,7 @@ export class TicketComponent implements OnInit, AfterViewInit {
             this.listarTematicas();
             this.ventanilla = ventanilla.id;
             this.listarTickets();
+            this.derivar = false;
           }
         ),
       )
