@@ -53,7 +53,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
                 {
                   nzDuration: 0,
                 }
-              )
+              );
             }
           }
         ),

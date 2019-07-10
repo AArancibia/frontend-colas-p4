@@ -4,9 +4,12 @@
 
 export const environment = {
   production: false,
-  url_server: 'http://192.168.10.208:4000/api/',
+  url_server: 'http://192.168.10.207:4522/api/',//4000
   url_server_tupa: 'http://192.168.10.207:4520/api/',//208:4001
-  wsUrl: 'http://192.168.10.208:8081',
+  wsUrl: 'http://192.168.10.207:8081',//8081
+  /*url_server: 'http://192.168.10.207:4522/api/',//4000
+  url_server_tupa: 'http://192.168.10.207:4520/api/',//208:4001
+  wsUrl: 'http://192.168.10.208:8081',//8081*/
 };
 
 /*

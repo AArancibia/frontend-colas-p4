@@ -59,6 +59,11 @@ export class TicketComponent implements OnInit, AfterViewInit {
       .pipe(
         tap(
           ( ventanilla: Ventanilla ) => {
+            this.mostrarInfoAdministrado = {};
+            this.selectTicket = null;
+            this.validacionEstados = null;
+            this.idtramite = null ;
+            this.pasos = 0;
             this.datosVentanilla = ventanilla;
             this.listarVentanillas();
             this.listarTematicas();
@@ -458,13 +463,13 @@ export class TicketComponent implements OnInit, AfterViewInit {
   }
 
   listarTramitePorTematica( idtematica ) {
-    const idtramite = this.selectTicket.idtramite ? this.selectTicket.idtramite : null;
+    /*const idtramite = this.selectTicket.idtramite ? this.selectTicket.idtramite : null;
     this.ticketService.actualizarTematicaOrTramite( this.selectTicket.id , {
       idtematica,
       idtramite,
     })
       .pipe()
-      .subscribe();
+      .subscribe();*/
     this.tematicaService.tramitesByTematica( idtematica )
       .pipe(
         tap( ( tramites: Tramite[] ) => {
