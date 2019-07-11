@@ -60,7 +60,7 @@ export class TicketComponent implements OnInit, AfterViewInit {
         tap(
           ( ventanilla: Ventanilla ) => {
             this.mostrarInfoAdministrado = {};
-            this.selectTicket = null;
+            //this.selectTicket = null;
             this.validacionEstados = null;
             this.idtramite = null ;
             this.pasos = 0;

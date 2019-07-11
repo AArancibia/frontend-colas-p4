@@ -185,7 +185,7 @@
         <nz-table
                   [hidden]="(pasos === 1 || !validacionEstados || validacionEstados.estadoticketId < 3 ||  pasos === 2 || idtematica <= 0 || !selectTicket )"
                   #tematicaTable
-                   [nzData]="listTematica"
+                  [nzData]="listTematica"
                   [nzSize]="'small'"><!-- [nzScroll]="{ y: '400px' }'" -->
           <thead>
           <tr>
