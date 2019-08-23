@@ -9,14 +9,22 @@
     style="min-height: 100vh; position: relative;"
   >
     <div class="logo"></div>
-    <ul nz-menu [nzTheme]="'dark'" [nzMode]="'inline'"
-        class="sider__lista"
-        [nzInlineCollapsed]="isCollapsed">
-      <li nz-menu-item class="sider__lista--item" style="background-color: #001529;">
+    <ul
+      nz-menu
+      [nzTheme]="'dark'"
+      [nzMode]="'inline'"
+      class="sider__lista"
+      [nzInlineCollapsed]="isCollapsed"
+    >
+      <li
+        nz-menu-item
+        class="sider__lista--item"
+        style="background-color: #001529;"
+      >
         <!--<span><i nz-icon nzType="minus-circle" nzTheme="outline">
           <span class="nav-text">Ocupado</span>
         </i></span>-->
-        <div class="example-input">
+        <!-- <div class="example-input">
           <input
             placeholder="Buscar Usuario..."
             nz-input
@@ -27,20 +35,19 @@
           <nz-autocomplete nzBackfill #auto>
             <nz-auto-option
               *ngFor="let usuario of usuarios" [nzValue]="usuario.username"
-              (click)="guardarVentanilla( usuario )"
+              (selectionChange)="guardarVentanilla( usuario )"
             >
               {{ usuario.username }}
             </nz-auto-option>
           </nz-autocomplete>
-        </div>
+        </div> -->
       </li>
     </ul>
   </nz-sider>
   <nz-layout>
     <!--<nz-header style="background: #fff; padding:0;"></nz-header>-->
-    <nz-content
-      *ngIf="ventanillaService.ventanilla.codigoventanilla"
-      style="padding: 1rem;position: relative;">
+    <!-- *ngIf="ventanillaService.ventanilla.codigoventanilla" -->
+    <nz-content style="padding: 1rem;position: relative;">
       <router-outlet></router-outlet>
     </nz-content>
     <nz-footer style="text-align: center;background-color: #ffffff;">
@@ -48,8 +55,9 @@
     </nz-footer>
   </nz-layout>
 </nz-layout>
-<ng-template #zeroTrigger >
-  <i nz-icon type="menu-fold" theme="outline"></i><!--style="position: fixed;top: 1.7rem;z-index: 1000;" -->
+<ng-template #zeroTrigger>
+  <i nz-icon type="menu-fold" theme="outline"></i
+  ><!--style="position: fixed;top: 1.7rem;z-index: 1000;" -->
 </ng-template>
 <!--<nz-layout>
   <nz-sider nzCollapsible [(nzCollapsed)]="isCollapsed" [nzTrigger]="triggerTemplate">

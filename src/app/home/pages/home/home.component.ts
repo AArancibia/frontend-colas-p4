@@ -6,11 +6,21 @@ import {VentanillaService} from '@app/core/services/ventanilla/ventanilla.servic
 import {Ventanilla} from '@app/core/models/ventanilla.model';
 import { NzNotificationService } from 'ng-zorro-antd';
 
+/**
+ * Home Component
+ */
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
+/**
+ * @author Alexis Arancibia Sanchez <aarancibia4251@gmail.com>
+ */
+/**
+ * Clase HomeComponent
+ * @class
+ */
 export class HomeComponent implements OnInit, AfterViewInit {
   isCollapsed = false;
   triggerTemplate: TemplateRef<void> | null = null;
@@ -18,6 +28,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
   inputValue: string;
   usuarios: Usuario[] = [];
 
+  /**
+   * Constructor de la clase Home.
+   * @constructor
+   */
   constructor(
     private usuarioService: UsuarioService,
     private ventanillaService: VentanillaService,
@@ -27,6 +41,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
   ngOnInit() {
   }
 
+  /**
+   * Funcion que filtra usuarios
+   * @function onInput
+   * @param {string} nombreUsuario - Nombre del Usuario
+   * @returns {(Usuario|Array)} - Lista de Usuarios
+   */
   onInput( nombreUsuario: string): void {
     if ( !nombreUsuario ) return;
     this.usuarioService.filtrarUsuarios( nombreUsuario )
@@ -38,6 +58,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
       .subscribe();
   }
 
+  /**
+   * Funcion para obtener Ventanilla por IdUsuario
+   * @param {any} idusuario - parametro idusuario
+   * @return {Ventanilla} Clase Ventanilla
+   */
   guardarVentanilla( { idusuario } ) {
     this.ventanillaService.obtenerVentanillaporIdUsuario( idusuario )
       .pipe(

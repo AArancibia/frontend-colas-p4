@@ -1,0 +1,20 @@
+.authentication {
+  height: 100vh;
+  display: flex;
+  flex-direction: row;
+
+  &__image {
+    height: inherit;
+    width: 70vw;
+    background-image: url("/assets/images/japan.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: top;
+  }
+
+  &__container {
+    height: inherit;
+    width: 30vw;
+    padding: 2rem;
+  }
+}

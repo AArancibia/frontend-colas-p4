@@ -1,6 +1,6 @@
 <div class="ventanilla__codigo">
-    {{ ventanillaService.ventanilla.codigoventanilla }} |
-    {{ ventanillaService.ventanilla.tipoatencion }}
+    {{ datosVentanilla.codigoventanilla }} |
+    {{ datosVentanilla.tipoatencion }}
 </div>
 <div nz-row >
   <div nz-col [nzXs]="24" [nzLg]="11" >
@@ -341,7 +341,7 @@
       </div>
       <div class="card__right" style="margin-top: 1rem;">
         <div class="card__right__footer">
-          <div (click)="imprimirDetalleTramite()">
+          <div ><!-- (click)="imprimirDetalleTramite()" -->
             <i nz-icon type="printer"></i>
             <p>Imprimir</p>
           </div>

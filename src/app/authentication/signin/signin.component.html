@@ -1,0 +1,41 @@
+<div class="signin">
+  <h2 class="signin__titulo">Inicio de Sesión</h2>
+  <form
+    [formGroup]="loginForm"
+    nz-form
+    class="signin__form"
+    (ngSubmit)="login()"
+  >
+    <nz-form-item>
+      <!-- <nz-form-label nzFor="email">Usuario</nz-form-label> -->
+      <nz-form-control>
+        <input
+          nz-input
+          class="signin__input"
+          name="username"
+          type="text"
+          formControlName="username"
+          id="username"
+          placeholder="Nombre de Usuario"
+        />
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <!-- <nz-form-label nzFor="password">Contraseña</nz-form-label> -->
+      <nz-form-control>
+        <input
+          nz-input
+          class="signin__input"
+          name="password"
+          type="password"
+          formControlName="password"
+          id="password"
+          placeholder="Contraseña"
+        />
+      </nz-form-control>
+    </nz-form-item>
+    <div class="signin__submit">
+      <button nz-button type="submit">LOGIN</button>
+    </div>
+  </form>
+</div>

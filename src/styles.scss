@@ -1,6 +1,12 @@
 /* You can add global styles to this file, and also import other style files */
 body {
-  font-family: 'Nunito Sans', sans-serif;
+  font-family: "Nunito Sans", sans-serif;
+}
+
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
 }
 
 .u-margin-bottom-small {
@@ -27,21 +33,19 @@ body {
   margin-top: 6rem;
 }
 
-
 .text-center {
   text-align: center;
 }
 
-@media ( max-height: 720px ) {
+@media (max-height: 720px) {
   #card__ticket {
     .ant-spin-nested-loading {
       height: 95% !important;
     }
-
   }
 }
 
-@media ( min-height: 920px ) {
+@media (min-height: 920px) {
   #card__ticket {
     .ant-card-head {
       height: 10% !important;
@@ -52,7 +56,7 @@ body {
   }
 }
 
-@media ( max-width: 540px ) {
+@media (max-width: 540px) {
   #card__ticket {
     /*.ant-card-head {
       height: 20% !important;
